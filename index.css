@@ -16,6 +16,12 @@ body {
     align-items: center;
     justify-content: center;
     background-image: linear-gradient(to top, #e499ff, #000000);
+    animation-name: Laden-sache;
+    animation-duration: 1s;
+}
+
+@keyframes Laden-sache {
+    from {filter: blur(4px);}
 }
 
 .Ladenheader {
@@ -33,9 +39,17 @@ body {
     opacity: 0.7;
     width: 750px;
     transition: all 0.45s ease;
+    animation-name: Header-fade;
+    animation-duration: 0.7s;
+}
+
+@keyframes Header-fade {
+    from { opacity: 0; transform: translateY(12px); filter: invert(1);}
+    to { opacity: 0.7; filter: invert(0);}
 }
 
 .Ladenheader img:hover {
+    transform: translateY(-8px);
     opacity: 1;
 }
 
@@ -47,7 +61,7 @@ body {
 }
 
 .github-button {
-    padding: 12px 18px;
+    padding: 14px 28px;
     border: solid 2px #aa4ed6;
     border-radius: 14px;
     background-color: transparent;
@@ -61,6 +75,9 @@ body {
 .github-button:hover {
     color: #e499ff;
     background-color: #aa4ed6;
+    box-shadow: 0 0 14px #aa4ed6;
+    padding: 14px 48px;
+    transform: translateY(-2px);
 }
 
 .Ladenfooter {
