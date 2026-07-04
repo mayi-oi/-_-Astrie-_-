@@ -1,2 +1,2 @@
-# -_-Astrie-_-
-Ein cooles und joke os projekt direkt dein web!
+# AstrieOS!*
+Willkommen zum AstrieOS!
