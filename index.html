@@ -9,21 +9,101 @@
         <link rel="stylesheet" href="Res/Font/font.css">
     </head>
     <body>
-        <!-- Ladenbild -->
-         <div class="Ladenoverlay" id="Laden-overlay">
-            <div class="Ladencontent">
-                <div class="Ladenheader">
-                    <img class="header-img" src="Res/Bild/Logo/Astrie-logo.png" alt="Cool logo">
-                    <h2>Kommen bald!</h2>
-                    <p>Ein cooles und joke OS projekt auf deinen web!</p>
+        <!-- Nutzter center -->
+          <div class="Nutztercenteroverlay" id="Nutztercenter-overlay">
+            <div class="Nutztercenter-content">
+                <div class="Nutztercenter-konto">
+                    <!-- <div class="Kontobanner-overlay">
+                        <div class="konto-banner"><img src="Res/Bild/Hintergrund/Astrie-hintergrund-v2.png"></div>
+                    </div> -->
                 </div>
-                <div class="Ladenbutton">
-                    <button class="github-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')">Repo besuchen!</button>
+                <div class="Nutztercenter-konto-actions"><p>to do: Nutzter banner</p></div>
+            </div>
+          </div>
+        
+        <!-- info zeiger-->
+         <div class="Infooverlay" id="Info-overlay">
+            <div class="Info-content">
+                <div class="Info-action"><p>Version: 0.01 (PREVIEW)</p></div>
+                <button class="github-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')">Repo besuchen!</button>
+            </div>
+          </div>
+        
+        <!-- Loading overlay -->
+         <div class="Loadingoverlay" id="Loading-overlay">
+            <div class="Loading-content">
+                <div class="Loading-header">
+                    <img src="Res/Bild/Logo/Astrie-logo.png" alt="Cool logo">
                 </div>
-                <div class="Ladenfooter">
-                    <p>Mayi-oi 2026</p>
+                <div class="Loading-spinner"></div>
+                <div class="Loading-text"><p>Diese Projekt ist ein <u>lustige betriebtssystem.</u> • ᴗ < </p></div>
+            </div>
+         </div>
+
+        <!-- Topbar -->
+         <div class="Topbar-status">
+            <div class="Topbar-content">
+                <span id="uhrzeit">00:00</span>
+                <span id="Akku-nummer">Laden...</span>
+                <div class="Topbar-actions">
+                    <div class="Topbar-info"><img src="Res/Bild/Icon/Desktop/Status/info_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" onclick="infotoggle()"></div>
+                    <div class="Topbar-user"><img src="Res/Bild/Icon/Desktop/Status/account_circle_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" onclick="kontotoggle()"></div>
                 </div>
             </div>
          </div>
+
+         <!-- Docker -->
+          <div class="Docker-div">
+            
+          </div>
+    <script src="Java/toggle.js"></script>
+    <script>
+        // Loading screen ding
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('Loading-overlay');
+            loader.style.opacity = '0';
+            loader.style.transition = 'opacity 0.25s ease';
+
+            setTimeout((() => {
+                loader.style.display = 'none';
+            }, 500));
+        });
+
+        // Cool Nutzter Zeitzone lol 
+        function updateUhrzeit() {
+            const jetzt = new Date();
+            const stunden = String(jetzt.getHours()).padStart(2, '0');
+            const minuten = String(jetzt.getMinutes()).padStart(2, '0');
+            const sekunden = String(jetzt.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('uhrzeit').textContent = `${stunden}:${minuten}:${sekunden}`;
+        }
+
+        updateUhrzeit();
+        setInterval(updateUhrzeit, 1000);
+
+        //Echtenzeit Akku status!
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(function(battery) {
+                
+                // Function to update the UI
+                function updateBatteryInfo() {
+                    // Update Level (convert 0-1 to percentage)
+                    document.getElementById('Akku-nummer').textContent = 
+                        Math.round(battery.level * 100) + '%';
+                    
+                }
+
+                // Initial update
+                updateBatteryInfo();
+
+                // Event Listeners for real-time updates
+                battery.addEventListener('levelchange', updateBatteryInfo);
+            });
+        } else {
+            document.getElementById('level').textContent = "API not supported";
+        }
+        
+    </script>
     </body>
 </html>

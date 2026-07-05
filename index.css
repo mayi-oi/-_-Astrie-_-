@@ -4,60 +4,11 @@ body {
     font-family: Google-sans;
     cursor: default;
     -webkit-tap-highlight-color: transparent;
-}
-
-.Ladenoverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-image: linear-gradient(to top, #e499ff, #000000);
-    animation-name: Laden-sache;
-    animation-duration: 1s;
-}
-
-@keyframes Laden-sache {
-    from {filter: blur(4px);}
-}
-
-.Ladenheader {
-    color: #ffffff;
-    text-align: center;
-    line-height: 0;
-}
-
-.Ladenheader h2 {
-    font-size: 2rem;
-    text-decoration: underline #aa4ed6;
-}
-
-.Ladenheader img {
-    opacity: 0.7;
-    width: 750px;
-    transition: all 0.45s ease;
-    animation-name: Header-fade;
-    animation-duration: 0.7s;
-}
-
-@keyframes Header-fade {
-    from { opacity: 0; transform: translateY(12px); filter: invert(1);}
-    to { opacity: 0.7; filter: invert(0);}
-}
-
-.Ladenheader img:hover {
-    transform: translateY(-8px);
-    opacity: 1;
-}
-
-.Ladenbutton {
-    margin-top: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-attachment: fixed;
+    background-image: url(/Res/Bild/Hintergrund/Astrie-hintergrund-v2.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .github-button {
@@ -65,7 +16,7 @@ body {
     border: solid 2px #aa4ed6;
     border-radius: 14px;
     background-color: transparent;
-    color: #8b2cb4;
+    color: #ffffff;
     font-family: Google-sans;
     font-size: 1rem;
     cursor: pointer;
@@ -77,7 +28,6 @@ body {
     background-color: #aa4ed6;
     box-shadow: 0 0 14px #aa4ed6;
     padding: 14px 48px;
-    transform: translateY(-2px);
 }
 
 .Ladenfooter {
@@ -85,4 +35,197 @@ body {
     align-items: center;
     justify-content: center;
     color: #ffffff80;
+}
+
+.Loadingoverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(to top, #e499ff, #000000);
+    z-index: 100000;
+    pointer-events: none;
+}
+
+.Loading-header img {
+    opacity: 0.7;
+    width: 500px;
+    transition: all 0.45s ease;
+    animation-name: Header-fade;
+    animation-duration: 0.5s;
+}
+
+@keyframes Header-fade {
+    from { opacity: 0; transform: translateY(8px);}
+    to { opacity: 0.7; filter: invert(0);}
+}
+
+.Loading-text {
+    text-align: center;
+    color: #ffffffab;
+    font-size: 1rem;
+}
+
+.Loading-spinner {
+    margin: auto;
+    border: 5px solid #b872d2;
+    border-top: 5px solid #f5b6ff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.Topbar-status {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 12px;
+    background-image: linear-gradient(to bottom, #371c446d, transparent);
+    transition: all 0.2s ease;
+    z-index: 12500;
+}
+
+.Topbar-status:hover {
+    padding-top: 24px;
+    background-color: #371c446d;
+    box-shadow: 0 0 67px #371c446d;
+}
+
+#uhrzeit {
+    color: #ffffff;
+    text-align: center;
+}
+
+#uhrzeit {
+    padding: 8px 14px;
+    border-radius: 12px;
+    transition: all 0.1s ease;
+    cursor: pointer;
+}
+
+#uhrzeit:hover {
+    background-color: #ffffff71;
+}
+
+.Topbar-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: -26px;
+    padding-right: 8px;
+    justify-content: right;
+    align-content: right;
+    
+}
+
+.Topbar-user img, .Topbar-info img {
+    padding: 4px;
+    border-radius: 12px;
+    transition: all 0.1s ease;
+    cursor: pointer;
+}
+
+.Topbar-user img:hover, .Topbar-info img:hover {
+    background-color: #ffffff71;
+}
+
+#Akku-nummer {
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 12px;
+    transition: all 0.1s ease;
+    cursor: pointer;
+}
+
+#Akku-nummer:hover {
+    background-color: #ffffff71;
+}
+
+.Docker-div {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px;
+    background-image: linear-gradient(to top, #b972d2a7, transparent);
+    transition: all 1s ease;
+    z-index: 12700;
+}
+
+.Docker-div:hover {
+    padding: 32px;
+}
+
+.Nutztercenteroverlay, .Infooverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0000004c;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.Nutztercenteroverlay.Nutztercenter-active, .Infooverlay.Info-active {
+    pointer-events: all;
+    opacity: 1;
+}
+
+.Nutztercenteroverlay.Nutztercenter-active .Nutztercenter-content, .Infooverlay.Info-active .Info-content {
+    transform: translateX(0%);
+    opacity: 1;
+}
+
+.Info-action {
+    color: #ffffff;
+    font-weight: 500;
+    text-align: center;
+}
+
+.Info-action:hover {
+    background-color: #ffffff4c;
+}
+
+.Nutztercenter-content {
+    position: fixed;
+    margin-top: -46rem;
+    margin-right: -103rem;
+    padding: 8px 18px;
+    background-color: #e2a0ff;
+    border-radius: 14px;
+    transform: translateX(100%);
+    transition: all 0.2s ease;
+}
+
+.Nutztercenter-konto {
+    padding: 8px 34px;
+    border-radius: 12px;
+    background-color: #9a6dad;
+}
+
+.Nutztercenter-konto:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.Nutztercenter-konto-actions {
+    margin-top: 12px;
+    padding: 8px 34px;
+    border-radius: 12px;
+    background-color: #b782cd;
+    color: #f0c6ff;
 }
