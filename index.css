@@ -11,6 +11,10 @@ body {
     background-repeat: no-repeat;
 }
 
+::selection {
+    background: #ffffff47;
+}
+
 .github-button {
     padding: 14px 28px;
     border: solid 2px #aa4ed6;
@@ -92,14 +96,16 @@ body {
     right: 0;
     padding: 12px;
     background-image: linear-gradient(to bottom, #371c446d, transparent);
-    transition: all 0.2s ease;
+    box-shadow: 0 0 0px #371c4400;
+    transition: padding 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
     z-index: 12500;
 }
 
 .Topbar-status:hover {
     padding-top: 24px;
     background-color: #371c446d;
-    box-shadow: 0 0 67px #371c446d;
+    box-shadow: 0 0 128px #371c44a8;
+    transition: padding 0.2s ease, background-color 0.2s ease, box-shadow 1s ease;
 }
 
 #uhrzeit {
@@ -128,14 +134,14 @@ body {
     
 }
 
-.Topbar-user img, .Topbar-info img {
+.Topbar-user img, .Topbar-info img, .Topbar-musik img {
     padding: 4px;
     border-radius: 12px;
     transition: all 0.1s ease;
     cursor: pointer;
 }
 
-.Topbar-user img:hover, .Topbar-info img:hover {
+.Topbar-user img:hover, .Topbar-info img:hover, .Topbar-musik img:hover {
     background-color: #ffffff71;
 }
 
@@ -156,14 +162,21 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 24px;
+    padding: 28px;
     background-image: linear-gradient(to top, #b972d2a7, transparent);
-    transition: all 1s ease;
+    color: #ffffff;
+    text-align: center;
+    transition: all 0.2s ease;
     z-index: 12700;
 }
 
+.Docker-div p {
+    line-height: 0;
+    opacity: 0.5;
+}
+
 .Docker-div:hover {
-    padding: 32px;
+    padding: 38px;
 }
 
 .Nutztercenteroverlay, .Infooverlay {
@@ -181,13 +194,13 @@ body {
     transition: all 0.3s ease;
 }
 
-.Nutztercenteroverlay.Nutztercenter-active, .Infooverlay.Info-active {
+.Nutztercenteroverlay.Nutztercenter-active, .Infooverlay.Info-active  {
     pointer-events: all;
     opacity: 1;
 }
 
 .Nutztercenteroverlay.Nutztercenter-active .Nutztercenter-content, .Infooverlay.Info-active .Info-content {
-    transform: translateX(0%);
+    transform: translateY(0%);
     opacity: 1;
 }
 
@@ -201,31 +214,237 @@ body {
     background-color: #ffffff4c;
 }
 
+.Nutztercenter-header, .Nutztercustom-header, .Musikplayer-header {
+    color: #ffffff;
+    font-size: 0.5rem;
+    text-align: center;
+    text-decoration: underline;
+}
+
 .Nutztercenter-content {
+    width: 20rem;
     position: fixed;
-    margin-top: -46rem;
-    margin-right: -103rem;
-    padding: 8px 18px;
+    top: 80px;
+    right: 8px;
+    padding: 12px;
+    background-color: #e2a0ff;
+    border-radius: 14px;
+    transform: translateY(-100%);
+    transition: all 0.2s ease;
+}
+
+.Nutzter-banner {
+    width: 100%;
+    height: 100px;
+    background-image: linear-gradient(to top, #e2a0ff, transparent);
+}
+
+.Nutzter-banner img {
+    width: 100%;
+    height: 125px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    object-fit: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.Nutztercenter-konto {
+    box-sizing: border-box;
+    width: 100%;
+    line-height: 0;
+    padding: 32px 18px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background-color: #9a6dad;
+    color: #f0c6ff;
+    cursor: pointer;
+}
+
+.Nutztercenter-konto:hover {
+    color: #ffffff;
+    background-color: #b07dc6;
+}
+
+.Nutzterpfp img {
+    object-fit: cover;
+    margin-right: 8px;
+    float: left;
+    border-radius: 14px;
+}
+
+.Nutztercenter-konto-actions {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 12px;
+    padding: 8px 34px;
+    border-radius: 12px;
+    background-color: #b782cd;
+    color: #f0c6ff;
+}
+
+.Nutzter-actions {
+    margin: 0 8px 8px 0;
+    padding: 0 18px;
+    display: flex;
+    gap: 14px;
+    border-radius: 14px;
+    background-color: #9a6dad;
+    cursor: pointer;
+}
+
+.Nutzter-actions:hover {
+    box-shadow: 0 0 0 2px #f0c6ff;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+.Nutztercustomoverlay, .Musikplayeroverlay {
+    position: fixed;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transition: all 0.2s;
+}
+
+.Nutztercustomoverlay.Hochladen-active ,.Musikplayeroverlay.Musik-active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.Musikplayeroverlay.Musik-active .Musikplayer-content {
+    transform: translateY(0%);
+}
+
+.Nutztercustomoverlay.Hochladen-active .Nutztercustom-content {
+    transform: translateX(0%);
+}
+
+.Nutztercustom-content {
+    width: 20rem;
+    position: fixed;
+    top: 6.5rem;
+    right: 22rem;
+    padding: 12px;
     background-color: #e2a0ff;
     border-radius: 14px;
     transform: translateX(100%);
     transition: all 0.2s ease;
 }
 
-.Nutztercenter-konto {
-    padding: 8px 34px;
+.Nutztercustom-pfp {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    line-height: 0;
+    padding: 18px 34px;
     border-radius: 12px;
     background-color: #9a6dad;
-}
-
-.Nutztercenter-konto:hover {
-    box-shadow: 0 0 0 2px #ffffff;
-}
-
-.Nutztercenter-konto-actions {
-    margin-top: 12px;
-    padding: 8px 34px;
-    border-radius: 12px;
-    background-color: #b782cd;
     color: #f0c6ff;
+}
+
+.Pfp-label {
+    width: 100%;
+}
+
+.Nutztercustom-pfp span {
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: #f0c6ff;
+    line-height: 1.2;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.Nutztercustom-pfp span:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+    background-color: #e499ff;
+}
+
+.Nutztercustom-pfp input {
+    display: none;
+}
+
+.Nutztercustom-banner {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    line-height: 1;
+    padding: 18px 34px;
+    border-radius: 12px;
+    background-color: #9a6dad;
+    color: #f0c6ff;
+}
+
+.banner-label {
+    width: 100%;
+}
+
+.Nutztercustom-banner span {
+    padding: 8px 18px;
+    border-radius: 14px;
+    background-color: #f0c6ff;
+    line-height: 1.2;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.Nutztercustom-banner span:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+    background-color: #e499ff;
+}
+
+.Nutztercustom-banner input {
+    display: none;
+}
+
+.Musikplayer-content {
+    width: 20rem;
+    position: fixed;
+    top: 80px;
+    right: 8px;
+    padding: 12px;
+    background-color: #e2a0ff;
+    border-radius: 14px;
+    transform: translateY(-100%);
+    transition: all 0.2s ease;
+}
+
+.Musikplayer-cover img {
+    width: 100%;
+    height: 150px;
+    border-radius: 12px;
+    object-fit: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.Musikplayer-menü {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 18px 32px;
+    border-radius: 12px;
+    background-color: #9a6dad;
+    color: #f0c6ff;
+}
+
+.Musikplayer-dropdown-menü {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
+    padding: 1px 12px;
+    border-radius: 12px;
+    background-color: #9a6dad;
+    color: #f0c6ff;
+    cursor: pointer;
+}
+
+.Musikplayer-dropdown-menü:hover {
+    box-shadow: 0 0 0 2px #f0c6ff;
+    background-color: #b07dc6;
+    font-weight: 500;
 }

@@ -12,23 +12,93 @@
         <!-- Nutzter center -->
           <div class="Nutztercenteroverlay" id="Nutztercenter-overlay">
             <div class="Nutztercenter-content">
-                <div class="Nutztercenter-konto">
-                    <!-- <div class="Kontobanner-overlay">
-                        <div class="konto-banner"><img src="Res/Bild/Hintergrund/Astrie-hintergrund-v2.png"></div>
-                    </div> -->
+                <div class="Nutztercenter-header">
+                    <h1>Angemeldet! (,,>ヮ<,,)!</h1>
                 </div>
-                <div class="Nutztercenter-konto-actions"><p>to do: Nutzter banner</p></div>
+                <div class="Nutzter-banner"><img id="Banner-bild" src="Res/Bild/Hintergrund/Default-Banner.png"></div>
+                <div class="Nutztercenter-konto" onclick="Nutzterhochladen_toggle()">
+                    <div class="Nutzterpfp">
+                      <img id="pfpbild" src="Res/Bild/Logo/AddText_07-03-07.27.32.png" alt="Profilbild" width="64" height="64">  
+                    </div>
+                    <p>Hallo</p>
+                    <h2 id="username">Gast!</h2>
+                </div>
+                <div class="Nutztercenter-konto-actions">
+                    <p>To do: 1/4 actions erstellt</p>
+                </div>
+                <div class="Nutztercenter-konto-actions">
+                    <div class="Nutzter-actions">
+                        <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/settings_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                        <p>Einstellungen</p>
+                    </div>
+                    <div class="Nutzter-actions">
+                        <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/switch_account_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                        <p>Konto wechsen</p>
+                    </div>
+                    <div class="Nutzter-actions">
+                        <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/logout_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                        <p>Abmelden</p>
+                    </div>
+                    <div class="Nutzter-actions" onclick="window.location.href='https://pfandkuchen.vercel.app'">
+                        <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/power_settings_new_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                        <p>Ausschalten</p>
+                    </div>
+                </div>
             </div>
           </div>
         
+        <!-- Nutzter pfp und name -->
+         <div class="Nutztercustomoverlay" id="Nutztercustom-overlay">
+            <div class="Nutztercustom-content">
+                <div class="Nutztercustom-header"><h1>Custom profil! ( ദ്ദി ˙ᗜ˙ )</h1></div>
+                
+                <div class="Nutztercustom-pfp">
+                    <h2>Laden dein cool pfp!</h2>
+                    <label class="banner-label" for="pfp-file">
+                        <span>Hochladen!</span>
+                    </label>
+                    <input id="pfp-file" type="file" accept="image/*" onchange="pfpFile(event)">
+                </div>
+                
+                <div class="Nutztercustom-banner">
+                    <h2>Laden dein cool banner!</h2>
+                    <label class="banner-label" for="banner-file">
+                        <span>Hochladen!</span>
+                    </label>
+                    <input id="banner-file" type="file" accept="image/*" onchange="BannerFile(event)">
+                </div>
+            </div>
+        </div>
+
         <!-- info zeiger-->
          <div class="Infooverlay" id="Info-overlay">
             <div class="Info-content">
-                <div class="Info-action"><p>Version: 0.01 (PREVIEW)</p></div>
+                <div class="Info-action"><p>Version: 0.02a (PREVIEW)</p></div>
                 <button class="github-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')">Repo besuchen!</button>
             </div>
           </div>
         
+        <!-- Musikplayer overlay -->
+         <div class="Musikplayeroverlay" id="Musikplayer-overlay">
+            <div class="Musikplayer-content">
+                <div class="Musikplayer-header">
+                    <h1>Musikplayer! ┌(・。・)┘♪</h1>
+                </div>
+                <div class="Musikplayer-cover">
+                    <img id="Musikcover" src="Res/Bild/Hintergrund/astrie-hintergrund.png">
+                </div>
+                <div class="Musikplayer-menü">
+                    <span id="Musiktitle">Kein Musik! :(</span>
+                    <br>
+                    <span id="Musikkünstler">Kein Musikkünstler! :(</span>
+                </div>
+                <div class="Musikplayer-dropdown-menü">
+                    <img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                    <p>Dein playlist! [to do: playlist erstellt]</p>
+                </div>
+            </div>
+         </div>
+
         <!-- Loading overlay -->
          <div class="Loadingoverlay" id="Loading-overlay">
             <div class="Loading-content">
@@ -47,6 +117,7 @@
                 <span id="Akku-nummer">Laden...</span>
                 <div class="Topbar-actions">
                     <div class="Topbar-info"><img src="Res/Bild/Icon/Desktop/Status/info_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" onclick="infotoggle()"></div>
+                    <div class="Topbar-musik"><img src="Res/Bild/Icon/Desktop/Status/music_note_2_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" onclick="musiktoggle()"></div>
                     <div class="Topbar-user"><img src="Res/Bild/Icon/Desktop/Status/account_circle_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" onclick="kontotoggle()"></div>
                 </div>
             </div>
@@ -54,7 +125,8 @@
 
          <!-- Docker -->
           <div class="Docker-div">
-            
+            <p>AstrieOS [INDEV] | Desktop exklusiv</p>
+            <p>2026.7.7</p>
           </div>
     <script src="Java/toggle.js"></script>
     <script>
@@ -104,6 +176,25 @@
             document.getElementById('level').textContent = "API not supported";
         }
         
+        // pfp loader
+        var pfpFile = function (event) {
+            var image = document.getElementById("pfpbild");
+            // Alte Blob-URL aufräumen, falls vorhanden
+            if (image.src.startsWith('blob:')) {
+                URL.revokeObjectURL(image.src);
+            }
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+
+        var BannerFile = function (event) {
+            var image = document.getElementById("Banner-bild");
+            // Alte Blob-URL aufräumen, falls vorhanden
+            if (image.src.startsWith('blob:')) {
+                URL.revokeObjectURL(image.src);
+            }
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+
     </script>
     </body>
 </html>

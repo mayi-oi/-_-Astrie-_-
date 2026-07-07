@@ -5,3 +5,26 @@ document.getElementById('Nutztercenter-overlay').addEventListener('click', (e) =
 
 function infotoggle() { document.querySelector('.Infooverlay').classList.toggle('Info-active'); }
 document.getElementById('Info-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Info-overlay')) infotoggle(); });
+
+function Nutzterhochladen_toggle() { document.querySelector('.Nutztercustomoverlay').classList.toggle('Hochladen-active'); }
+document.getElementById('Nutztercustom-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Nutztercustom-overlay')) Nutzterhochladen_toggle(); });
+
+function musiktoggle() { document.querySelector('.Musikplayeroverlay').classList.toggle('Musik-active'); }
+document.getElementById('Musikplayer-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Musikplayer-overlay')) musiktoggle(); });
+
+// Keybind shortcuts
+function init() {
+    document.addEventListener('keydown', handleKeydown);
+}
+
+function handleKeydown(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; 
+        switch(e.code) {
+            case 'KeyA': kontotoggle(); break;
+            case 'KeyI': infotoggle(); break;
+            case 'KeyM': musiktoggle(); break;
+        }
+    }
+
+// init
+window.addEventListener('DOMContentLoaded', init)
