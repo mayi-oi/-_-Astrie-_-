@@ -24,14 +24,14 @@
                     <h2 id="username">Gast!</h2>
                 </div>
                 <div class="Nutztercenter-konto-actions">
-                    <p>To do: 1/4 actions erstellt</p>
+                    <p>To do: 3.5/4 actions erstellt</p>
                 </div>
                 <div class="Nutztercenter-konto-actions">
-                    <div class="Nutzter-actions">
+                    <div class="Nutzter-actions" onclick="Settingtoggle()">
                         <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/settings_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
                         <p>Einstellungen</p>
                     </div>
-                    <div class="Nutzter-actions">
+                    <div class="Nutzter-actions" onclick="Kontoswitch()">
                         <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/switch_account_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
                         <p>Konto wechsen</p>
                     </div>
@@ -47,6 +47,73 @@
             </div>
           </div>
         
+        <!-- Einstellugnen -->
+         <div class="Settingsoverlay" id="Settings-overlay">
+                <div class="Settings-content">
+                    <div class="Settings-header">
+                        <h1>Einstellungen! (⎚-⎚)</h1>
+                    </div>
+                    <div class="Settingsbox-todo">
+                        <p>Todo:</p>
+                        <li>Sprache übersetzt</li>
+                        <li>Tastenkürzel konfigurieren</li>
+                        <li>Audio für musikplayer konfigurieren</li>
+                        <li>Grafik erstellt</li>
+                        <li>Atombombe (Wartung) erstellt</li>
+                    </div>
+                    <div class="Settingsbox-scroll">
+                        <p>Allgemein</p>
+                        <div class="Settingsbox-actions">
+                            <p>Schnellzugriff</p>
+                            <div class="Repo-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')"><p>Repo besuchen!</p></div>
+                            <div class="Release-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-/tags', '_blank')"><p>Release durchlesen!</p></div>
+                            <div class="Release-button" onclick="window.open('https://github.com/mayi-oi', '_blank')"><p>Profil besuchen!</p></div>
+                            <br>
+                            <p>Eingabe</p>
+                            <div class="Release-button"><p>Tastenkürzel konfigurieren</p></div>
+                            <br>
+                            <p>Sprache</p>
+                            <div class="Sprachedropdown-button"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Deutsch (Hauptsprache)</p></div>
+                        </div>
+                        <br>
+                        <p>Grafik</p>
+                        <div class="Settingsbox-actions"><h2>In arbeit :)</h2></div>
+                        <br>
+                        <p>Audio</p>
+                        <div class="Settingsbox-actions"><h2>In arbeit :)</h2></div>
+                        <br>
+                        <p>Atombombe zone</p>
+                        <div class="Settingsbox-actions"><h2>In arbeit :)</h2></div>
+                        <br>
+                        <div class="Settings-footer">
+                            <h1>AstrieOS</h1>
+                            <p>2026.7.8</p>
+                        </div>
+                </div>
+            </div>
+         </div>
+
+        <!-- Konto wechsen -->
+         <div class="Kontowechsenoverlay" id="Kontowechsen-overlay">
+            <div class="Kontowechsen-content">
+                <div class="Kontowechsen-header">
+                    <h1>Konto wechsen! (ᵕ • ᴗ •)</h1>
+                </div>
+                <div class="Settingsbox-todo">
+                    <p>Todo:</p>
+                    <li>Hinzufügen und löschen</li>
+                </div>
+                <div class="Kontowechsen-add"><img src="Res/Bild/Icon/Desktop/Status/person_add_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Konto hingefügt!</p></div>
+                <div class="Kontowechsen-box">
+                    <div class="Kontowechsen-item">
+                        <img id="pfpbild" src="Res/Bild/Logo/AddText_07-03-07.27.32.png" width="48" height="48">
+                        <p>Gast</p>
+                    </div>
+                </div>
+            </div>
+         </div>
+
+
         <!-- Nutzter pfp und name -->
          <div class="Nutztercustomoverlay" id="Nutztercustom-overlay">
             <div class="Nutztercustom-content">
@@ -73,7 +140,7 @@
         <!-- info zeiger-->
          <div class="Infooverlay" id="Info-overlay">
             <div class="Info-content">
-                <div class="Info-action"><p>Version: 0.02a (PREVIEW)</p></div>
+                <div class="Info-action"><p>Version: 0.03 (PREVIEW)</p></div>
                 <button class="github-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')">Repo besuchen!</button>
             </div>
           </div>
@@ -126,7 +193,6 @@
          <!-- Docker -->
           <div class="Docker-div">
             <p>AstrieOS [INDEV] | Desktop exklusiv</p>
-            <p>2026.7.7</p>
           </div>
     <script src="Java/toggle.js"></script>
     <script>

@@ -12,6 +12,12 @@ document.getElementById('Nutztercustom-overlay').addEventListener('click', (e) =
 function musiktoggle() { document.querySelector('.Musikplayeroverlay').classList.toggle('Musik-active'); }
 document.getElementById('Musikplayer-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Musikplayer-overlay')) musiktoggle(); });
 
+function Settingtoggle() { document.querySelector('.Settingsoverlay').classList.toggle('Settings-active'); }
+document.getElementById('Settings-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Settings-overlay')) Settingtoggle(); });
+
+function Kontoswitch() { document.querySelector('.Kontowechsenoverlay').classList.toggle('Kontowechsen-active'); }
+document.getElementById('Kontowechsen-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Kontowechsen-overlay')) Kontoswitch(); });
+
 // Keybind shortcuts
 function init() {
     document.addEventListener('keydown', handleKeydown);
@@ -23,6 +29,8 @@ function handleKeydown(e) {
             case 'KeyA': kontotoggle(); break;
             case 'KeyI': infotoggle(); break;
             case 'KeyM': musiktoggle(); break;
+            case 'KeyS': Settingtoggle(); break;
+            case 'KeyK': Kontoswitch(); break;
         }
     }
 

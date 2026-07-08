@@ -11,6 +11,10 @@ body {
     background-repeat: no-repeat;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 ::selection {
     background: #ffffff47;
 }
@@ -104,7 +108,7 @@ body {
 .Topbar-status:hover {
     padding-top: 24px;
     background-color: #371c446d;
-    box-shadow: 0 0 128px #371c44a8;
+    box-shadow: 0 0 168px #371c44a8;
     transition: padding 0.2s ease, background-color 0.2s ease, box-shadow 1s ease;
 }
 
@@ -179,7 +183,7 @@ body {
     padding: 38px;
 }
 
-.Nutztercenteroverlay, .Infooverlay {
+.Nutztercenteroverlay, .Infooverlay, .Settingsoverlay, .Kontowechsenoverlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -194,7 +198,7 @@ body {
     transition: all 0.3s ease;
 }
 
-.Nutztercenteroverlay.Nutztercenter-active, .Infooverlay.Info-active  {
+.Nutztercenteroverlay.Nutztercenter-active, .Infooverlay.Info-active, .Settingsoverlay.Settings-active, .Kontowechsenoverlay.Kontowechsen-active  {
     pointer-events: all;
     opacity: 1;
 }
@@ -214,7 +218,7 @@ body {
     background-color: #ffffff4c;
 }
 
-.Nutztercenter-header, .Nutztercustom-header, .Musikplayer-header {
+.Nutztercenter-header, .Nutztercustom-header, .Musikplayer-header, .Settings-header, .Kontowechsen-header {
     color: #ffffff;
     font-size: 0.5rem;
     text-align: center;
@@ -236,12 +240,13 @@ body {
 .Nutzter-banner {
     width: 100%;
     height: 100px;
-    background-image: linear-gradient(to top, #e2a0ff, transparent);
+    
 }
 
 .Nutzter-banner img {
     width: 100%;
     height: 125px;
+    background-image: linear-gradient(to top, #e2a0ff, transparent);
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     object-fit: cover;
@@ -447,4 +452,179 @@ body {
     box-shadow: 0 0 0 2px #f0c6ff;
     background-color: #b07dc6;
     font-weight: 500;
+}
+
+.Settings-content, .Kontowechsen-content {
+    width: 20rem;
+    position: fixed;
+    top: 80px;
+    left: 8px;
+    padding: 12px;
+    background-color: #e2a0ff;
+    border-radius: 14px;
+    transform: translateX(-100%);
+    transition: all 0.2s ease;
+}
+
+.Settings-content p {
+    padding-left: 12px;
+    color: #ffffff;
+    font-weight: 500;
+    text-decoration: underline;
+    line-height: 0;
+}
+
+.Settingsbox-scroll {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 540px;
+}
+
+.Settingsbox-todo {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 18px 32px;
+    border-radius: 12px;
+    background-color: #bb85d2;
+    color: #ffffff;
+    transition: all 0.1s ease;
+}
+
+.Settingsbox-todo:hover {
+    background-color: #a774ba;
+}
+
+.Settingsbox-todo p {
+    line-height: 0;
+    padding-left: 0px;
+    text-decoration: none;
+}
+
+.Settingsbox-actions, .Kontowechsen-box {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 18px 32px;
+    border-radius: 12px;
+    background-color: #9a6dad;
+    color: #f0c6ff;
+    transition: all 0.1s ease;
+}
+
+.Settingsbox-actions:hover {
+    background-color: #a774ba;
+}
+
+.Settingsbox-actions p {
+    padding-left: 0px;
+    text-decoration: none;
+}
+
+.Repo-button {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px 18px;
+    border-radius: 12px;
+    background-color: #e2a0ff;
+    text-align: center;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.Repo-button:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.Release-button {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px 18px;
+    border-radius: 12px;
+    background-color: #886398;
+    text-align: center;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.Release-button:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.Sprachedropdown-button {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px 18px;
+    border-radius: 12px;
+    background-color: #745383;
+    text-align: center;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.Sprachedropdown-button:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.Settingsbox-actions h2 {
+    text-align: center;
+    font-size: 1rem;
+}
+
+.Settings-footer {
+    text-align: center;
+    color: #ffffff;
+    line-height: 0;
+}
+
+.Settings-footer p {
+    text-decoration: none;
+    font-weight: 400;
+}
+
+.Settingsoverlay.Settings-active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.Settingsoverlay.Settings-active .Settings-content, .Kontowechsenoverlay.Kontowechsen-active .Kontowechsen-content {
+    transform: translateX(0%);
+}
+
+.Kontowechsen-add {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 4px 18px;
+    border-radius: 12px;
+    background-color: #886398;
+    color: #f0c6ff;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.Kontowechsen-add:hover, .Kontowechsen-item:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.Kontowechsen-item {
+    display: flex;
+    padding: 8px 18px;
+    border-radius: 12px;
+    background-color: #886398;
+    color: #f0c6ff;
+    font-weight: 400;
+    transition: all 0.1s ease;
+}
+
+.Kontowechsen-item img {
+    object-fit: cover;
+    margin-right: 8px;
+    float: left;
+    border-radius: 14px;
 }
