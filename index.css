@@ -16,7 +16,7 @@ body {
 }
 
 ::selection {
-    background: #ffffff47;
+    background: #ffffff00;
 }
 
 .github-button {
@@ -434,9 +434,15 @@ body {
     border-radius: 12px;
     background-color: #9a6dad;
     color: #f0c6ff;
+    text-align: center;
 }
 
-.Musikplayer-dropdown-menü {
+#Musiktitle {
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.Musikplayer-dropdown-menu, .Musikplayer-hochladen {
     margin-top: 8px;
     margin-bottom: 8px;
     display: flex;
@@ -448,10 +454,69 @@ body {
     cursor: pointer;
 }
 
-.Musikplayer-dropdown-menü:hover {
+.Musikplayer-dropdown-menu:hover, .Musikplayer-hochladen:hover {
     box-shadow: 0 0 0 2px #f0c6ff;
     background-color: #b07dc6;
     font-weight: 500;
+}
+
+.Musikplayer-dp-menu, .Sp-dp-menu, .Keybind-dp-menu {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    background-color: #876198;
+    color: #f0c6ff;
+    transition: all 0.1s ease;
+    animation: coolslider 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.Musikplayer-dp-menu h2, .Sp-dp-menu h2 {
+    font-size: 1rem;
+}
+
+.Musikplayer-dp-menu:hover, .Sp-dp-menu:hover, .Keybind-dp-menu:hover {
+    background-color: #a879bd;
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.Musikplayer-dp-menu.open {
+    display: flex;
+}
+
+.Sp-dp-menu.open, .Keybind-dp-menu.open {
+    display: block;
+}
+
+@keyframes coolslider {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.Sprache-item-1, .Keybind-item {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background-color: #e2a0ff;
+    color: #876198;
+}
+
+.Sprache-item {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.Sprache-item:hover {
+    background-color: #e2a0ff;
+    color: #876198;
 }
 
 .Settings-content, .Kontowechsen-content {
@@ -522,7 +587,7 @@ body {
 .Repo-button {
     margin-top: 8px;
     margin-bottom: 8px;
-    padding: 8px 18px;
+    padding: 14px 18px;
     border-radius: 12px;
     background-color: #e2a0ff;
     text-align: center;
@@ -538,7 +603,7 @@ body {
 .Release-button {
     margin-top: 8px;
     margin-bottom: 8px;
-    padding: 8px 18px;
+    padding: 14px 18px;
     border-radius: 12px;
     background-color: #886398;
     text-align: center;
@@ -556,7 +621,7 @@ body {
     gap: 12px;
     margin-top: 8px;
     margin-bottom: 8px;
-    padding: 8px 18px;
+    padding: 12px 18px;
     border-radius: 12px;
     background-color: #745383;
     text-align: center;
@@ -592,6 +657,24 @@ body {
 
 .Settingsoverlay.Settings-active .Settings-content, .Kontowechsenoverlay.Kontowechsen-active .Kontowechsen-content {
     transform: translateX(0%);
+}
+
+.atombombe-button {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    background-color: #ffb6b6;
+    color: #986363;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.atombombe-button:hover {
+    color: #5d3a3a;
+    background-color: #ff6c6c;
+    box-shadow: 0 0 0 2px #ffb6b6;
 }
 
 .Kontowechsen-add {

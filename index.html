@@ -13,15 +13,15 @@
           <div class="Nutztercenteroverlay" id="Nutztercenter-overlay">
             <div class="Nutztercenter-content">
                 <div class="Nutztercenter-header">
-                    <h1>Angemeldet! (,,>ヮ<,,)!</h1>
+                    <h1 data-i18n="usercenter_title">Angemeldet! (,,>ヮ<,,)!</h1>
                 </div>
                 <div class="Nutzter-banner"><img id="Banner-bild" src="Res/Bild/Hintergrund/Default-Banner.png"></div>
                 <div class="Nutztercenter-konto" onclick="Nutzterhochladen_toggle()">
                     <div class="Nutzterpfp">
                       <img id="pfpbild" src="Res/Bild/Logo/AddText_07-03-07.27.32.png" alt="Profilbild" width="64" height="64">  
                     </div>
-                    <p>Hallo</p>
-                    <h2 id="username">Gast!</h2>
+                    <p data-i18n="usercenter_hello">Hallo</p>
+                    <h2 data-i18n="usercenter_guest" id="username">Gast!</h2>
                 </div>
                 <div class="Nutztercenter-konto-actions">
                     <p>To do: 3.5/4 actions erstellt</p>
@@ -29,19 +29,19 @@
                 <div class="Nutztercenter-konto-actions">
                     <div class="Nutzter-actions" onclick="Settingtoggle()">
                         <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/settings_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
-                        <p>Einstellungen</p>
+                        <p data-i18n="settings">Einstellungen</p>
                     </div>
                     <div class="Nutzter-actions" onclick="Kontoswitch()">
                         <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/switch_account_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
-                        <p>Konto wechsen</p>
+                        <p data-i18n="switch_account">Konto wechsen</p>
                     </div>
                     <div class="Nutzter-actions">
                         <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/logout_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
-                        <p>Abmelden</p>
+                        <p data-i18n="logout">Abmelden</p>
                     </div>
                     <div class="Nutzter-actions" onclick="window.location.href='https://pfandkuchen.vercel.app'">
                         <img src="Res/Bild/Icon/Desktop/Status/Nutzter-actions/power_settings_new_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
-                        <p>Ausschalten</p>
+                        <p data-i18n="power_off">Ausschalten</p>
                     </div>
                 </div>
             </div>
@@ -51,43 +51,63 @@
          <div class="Settingsoverlay" id="Settings-overlay">
                 <div class="Settings-content">
                     <div class="Settings-header">
-                        <h1>Einstellungen! (⎚-⎚)</h1>
+                        <h1 data-i18n="settings_title">Einstellungen! (⎚-⎚)</h1>
                     </div>
                     <div class="Settingsbox-todo">
                         <p>Todo:</p>
-                        <li>Sprache übersetzt</li>
-                        <li>Tastenkürzel konfigurieren</li>
+                        <li>Sprache übersetzt [Erledgit! :D]</li>
+                        <li>Tastenkürzel konfigurieren [Erledgit! :D]</li>
                         <li>Audio für musikplayer konfigurieren</li>
                         <li>Grafik erstellt</li>
                         <li>Atombombe (Wartung) erstellt</li>
                     </div>
                     <div class="Settingsbox-scroll">
-                        <p>Allgemein</p>
+                        <p data-i18n="settings_general">Allgemein</p>
                         <div class="Settingsbox-actions">
-                            <p>Schnellzugriff</p>
-                            <div class="Repo-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')"><p>Repo besuchen!</p></div>
-                            <div class="Release-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-/tags', '_blank')"><p>Release durchlesen!</p></div>
-                            <div class="Release-button" onclick="window.open('https://github.com/mayi-oi', '_blank')"><p>Profil besuchen!</p></div>
+                            <p data-settings_quick_access="">Schnellzugriff</p>
+                            <div data-i18n="settings_repo_visit" class="Repo-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')"><p>Repo besuchen!</p></div>
+                            <div data-i18n="settings_release" class="Release-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-/releases', '_blank')"><p>Release durchlesen!</p></div>
+                            <div data-i18n="settings_profile" class="Release-button" onclick="window.open('https://github.com/mayi-oi', '_blank')"><p>Profil besuchen!</p></div>
                             <br>
-                            <p>Eingabe</p>
-                            <div class="Release-button"><p>Tastenkürzel konfigurieren</p></div>
+                            <p data-i18n="settings_input">Eingabe</p>
+                            <div data-i18n="settings_shortcuts" class="Release-button" onclick="Keybindtoggle()"><p>Tastenkürzel konfigurieren</p></div>
+                            <div class="Keybind-dp-menu" id="keybind-dp-menu">
+                                <div class="Keybind-item"><p data-i18n="keybind-settings">Einstellugnen | s</p></div>
+                                <div class="Keybind-item"><p data-i18n="keybind-musicplayer">Musikplayer | m</p></div>
+                                <div class="Keybind-item"><p data-i18n="keybind-accountcenter">Kontocenter | a</p></div>
+                                <div class="Keybind-item"><p data-i18n="keybind-accountswitch">Kontowechsen | k</p></div>
+                            </div>
                             <br>
-                            <p>Sprache</p>
-                            <div class="Sprachedropdown-button"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Deutsch (Hauptsprache)</p></div>
+                            <p data-i18n="settings_language">Sprache</p>
+                            <div class="Sprachedropdown-button" id="SPdropdown-button" onclick="spdropdown()"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p data-i18n="language_de">Deutsch (Hauptsprache)</p></div>
+                            <div class="Sp-dp-menu" id="sp-dp-menu">
+                                <div class="Sprache-item-1" onclick="I18n.setLanguage('de')">Deutsch</div>
+                                <div class="Sprache-item" onclick="I18n.setLanguage('en')">Englich</div>
+                                <div class="Sprache-item" onclick="I18n.setLanguage('fr')">France</div>
+                                <div class="Sprache-item" onclick="I18n.setLanguage('sv')">Svenska</div>
+                                <div class="Sprache-item" onclick="I18n.setLanguage('ja')">日本語</div>
+                                <div class="Sprache-item" onclick="I18n.setLanguage('ko')">한국어</div>
+                                <div class="Sprache-item" onclick="I18n.setLanguage('zh-TW')">中文（繁體）</div>
+                                <div class="Sprache-item" onclick="I18n.setLanguage('zh-CN')">中文（繁体）</div>
+                            </div>
                         </div>
                         <br>
-                        <p>Grafik</p>
+                        <p data-i18n="settings_graphics">Grafik</p>
                         <div class="Settingsbox-actions"><h2>In arbeit :)</h2></div>
                         <br>
-                        <p>Audio</p>
+                        <p data-i18n="settings_audio">Audio</p>
                         <div class="Settingsbox-actions"><h2>In arbeit :)</h2></div>
                         <br>
-                        <p>Atombombe zone</p>
-                        <div class="Settingsbox-actions"><h2>In arbeit :)</h2></div>
+                        <p data-i18n="settings_nuke_zone">Atombombe zone</p>
+                        <div class="Settingsbox-actions">
+                            <div data-i18n="settings_nuke_all" class="atombombe-button">DEN GANZE ZURÜCKSETZEN</div>
+                            <div data-i18n="settings_nuke_settings" class="atombombe-button">Einstellungen ZURÜCKSETZEN</div>
+                            <div data-i18n="settings_nuke_music" class="atombombe-button">Ganze Musikplayer LÖSCHEN</div>
+                        </div>
                         <br>
                         <div class="Settings-footer">
                             <h1>AstrieOS</h1>
-                            <p>2026.7.8</p>
+                            <p>2026.7.9</p>
                         </div>
                 </div>
             </div>
@@ -97,17 +117,17 @@
          <div class="Kontowechsenoverlay" id="Kontowechsen-overlay">
             <div class="Kontowechsen-content">
                 <div class="Kontowechsen-header">
-                    <h1>Konto wechsen! (ᵕ • ᴗ •)</h1>
+                    <h1 data-i18n="account_switch_title">Konto wechsen! (ᵕ • ᴗ •)</h1>
                 </div>
                 <div class="Settingsbox-todo">
                     <p>Todo:</p>
                     <li>Hinzufügen und löschen</li>
                 </div>
-                <div class="Kontowechsen-add"><img src="Res/Bild/Icon/Desktop/Status/person_add_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Konto hingefügt!</p></div>
+                <div class="Kontowechsen-add"><img src="Res/Bild/Icon/Desktop/Status/person_add_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p data-i18n="account_switch_add">Konto hingefügt!</p></div>
                 <div class="Kontowechsen-box">
                     <div class="Kontowechsen-item">
                         <img id="pfpbild" src="Res/Bild/Logo/AddText_07-03-07.27.32.png" width="48" height="48">
-                        <p>Gast</p>
+                        <p data-i18n="account_switch_guest">Gast</p>
                     </div>
                 </div>
             </div>
@@ -117,20 +137,20 @@
         <!-- Nutzter pfp und name -->
          <div class="Nutztercustomoverlay" id="Nutztercustom-overlay">
             <div class="Nutztercustom-content">
-                <div class="Nutztercustom-header"><h1>Custom profil! ( ദ്ദി ˙ᗜ˙ )</h1></div>
+                <div class="Nutztercustom-header"><h1 data-i18n="custom_profile_title">Custom profil! ( ദ്ദി ˙ᗜ˙ )</h1></div>
                 
                 <div class="Nutztercustom-pfp">
-                    <h2>Laden dein cool pfp!</h2>
+                    <h2 data-i18n="custom_profile_pfp">Laden dein cool pfp!</h2>
                     <label class="banner-label" for="pfp-file">
-                        <span>Hochladen!</span>
+                        <span data-i18n="custom_profile_upload">Hochladen!</span>
                     </label>
                     <input id="pfp-file" type="file" accept="image/*" onchange="pfpFile(event)">
                 </div>
                 
                 <div class="Nutztercustom-banner">
-                    <h2>Laden dein cool banner!</h2>
+                    <h2 data-i18n="custom_profile_banner">Laden dein cool banner!</h2>
                     <label class="banner-label" for="banner-file">
-                        <span>Hochladen!</span>
+                        <span data-i18n="custom_profile_upload">Hochladen!</span>
                     </label>
                     <input id="banner-file" type="file" accept="image/*" onchange="BannerFile(event)">
                 </div>
@@ -140,7 +160,7 @@
         <!-- info zeiger-->
          <div class="Infooverlay" id="Info-overlay">
             <div class="Info-content">
-                <div class="Info-action"><p>Version: 0.03 (PREVIEW)</p></div>
+                <div class="Info-action"><p>Version: 0.04 (PREVIEW)</p></div>
                 <button class="github-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')">Repo besuchen!</button>
             </div>
           </div>
@@ -149,20 +169,29 @@
          <div class="Musikplayeroverlay" id="Musikplayer-overlay">
             <div class="Musikplayer-content">
                 <div class="Musikplayer-header">
-                    <h1>Musikplayer! ┌(・。・)┘♪</h1>
+                    <h1 data-i18n="musicplayer_title">Musikplayer! ┌(・。・)┘♪</h1>
                 </div>
+
                 <div class="Musikplayer-cover">
                     <img id="Musikcover" src="Res/Bild/Hintergrund/astrie-hintergrund.png">
                 </div>
+
                 <div class="Musikplayer-menü">
-                    <span id="Musiktitle">Kein Musik! :(</span>
+                    <span data-i18n="musicplayer_no_music" id="Musiktitle">Kein Musik! :(</span>
                     <br>
-                    <span id="Musikkünstler">Kein Musikkünstler! :(</span>
+                    <span data-i18n="musicplayer_no_artist" id="Musikkünstler">Kein Musikkünstler! :(</span>
                 </div>
-                <div class="Musikplayer-dropdown-menü">
-                    <img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
-                    <p>Dein playlist! [to do: playlist erstellt]</p>
+
+                <div class="Musikplayer-hochladen" id="musikplayer-hochladen" onclick="Musikplayer_hochladen()">
+                    <img src="Res/Bild/Icon/Desktop/Musikplayer/upload_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                    <p data-i18n="musicplayer_upload">Hochladen dein Musik!</p>
                 </div>
+
+                <div class="Musikplayer-dropdown-menu" id="musikplayer-dropdown-menu" onclick="Musikplayer_playlist()">
+                    <img id="Musikplayer-dropdown-img" src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                    <p data-i18n="musicplayer_playlist">Dein playlist! [to do: playlist erstellt]</p>
+                </div>
+                <div class="Musikplayer-dp-menu" id="musikplayer-dp-menu"><h2 data-i18n="empty_playlist">Super duper leer playlist... (╥ ᴗ ╥)</h2></div>
             </div>
          </div>
 
@@ -194,6 +223,8 @@
           <div class="Docker-div">
             <p>AstrieOS [INDEV] | Desktop exklusiv</p>
           </div>
+
+    <script src="Java/übersetztung.js"></script>
     <script src="Java/toggle.js"></script>
     <script>
         // Loading screen ding
@@ -260,6 +291,24 @@
             }
             image.src = URL.createObjectURL(event.target.files[0]);
         };
+
+        // Keine ahung für diesen...
+        function updateMusicInfo(title, artist) {
+            const titleEl = document.getElementById('Musiktitle');
+            const artistEl = document.getElementById('Musikkünstler');
+            
+            if (title) {
+                titleEl.textContent = title;
+            } else {
+                titleEl.textContent = I18n.t('musicplayer_no_music');
+            }
+            
+            if (artist) {
+                artistEl.textContent = artist;
+            } else {
+                artistEl.textContent = I18n.t('musicplayer_no_artist');
+            }
+        }
 
     </script>
     </body>
