@@ -34,5 +34,21 @@ function handleKeydown(e) {
         }
     }
 
+// Dropdown menü
+function Musikplayer_playlist() {
+    const dropdown = document.getElementById('musikplayer-dp-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
+function spdropdown() {
+    const dropdown = document.getElementById('sp-dp-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
+function Keybindtoggle() {
+    const dropdown = document.getElementById('keybind-dp-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
 // init
 window.addEventListener('DOMContentLoaded', init)
