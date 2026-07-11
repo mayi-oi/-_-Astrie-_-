@@ -57,8 +57,8 @@
                         <p>Todo:</p>
                         <li>Sprache übersetzt [Erledgit! :D]</li>
                         <li>Tastenkürzel konfigurieren [Erledgit! :D]</li>
-                        <li>Audio für musikplayer konfigurieren</li>
-                        <li>Grafik erstellt</li>
+                        <li>Audio für musikplayer konfigurieren [Erledgit! :D]</li>
+                        <li>Grafik erstellt [Erledgit! :D]</li>
                         <li>Atombombe (Wartung) erstellt</li>
                     </div>
                     <div class="Settingsbox-scroll">
@@ -93,10 +93,47 @@
                         </div>
                         <br>
                         <p data-i18n="settings_graphics">Grafik</p>
-                        <div class="Settingsbox-actions"><h2>In arbeit :)</h2></div>
+                        <div class="Settingsbox-actions">
+                            <p data-i18n="Render">Renderer</p>
+                            <div class="Render-fps-zeigen" onclick="Fpszeigen()"><p data-i18n="Show-fps">Fps zeigen</p></div>
+                            <div class="Render-fps" onclick="Fpslimit()"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p data-i18n="fps-limit">Fps-limit</p></div>
+                            <div class="Limit-menu" id="limit-menu">
+                                <div class="Limit-item">v-sync</div>
+                                <div class="Limit-item">2x-refresh rate</div>
+                                <div class="Limit-item">4x-refresh rate</div>
+                                <div class="Limit-item">8x-refresh rate</div>
+                                <div class="Limit-item" data-i18n="notunlimited">komplett (nicht) unlimitiv</div>
+                            </div>
+                            <div class="Render-thread" onclick="Thread_modus()"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p data-i18n="Threading-mode">Threading-modus</p></div>
+                            <div class="Thread-menu" id="thread-menu">
+                                <div data-i18n="Singlecore-mode" class="Thread-item">Singlecore</div>
+                                <div data-i18n="Multicore-mode" class="Thread-item">Multicore</div>
+                            </div>
+                            <!-- <br>
+                            <p>Visualizer</p>
+                             <div class="Visualizer-canva" onclick="Visualcanva()"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Visualizer-teil</p></div>
+                            <div class="Visualcanva-menu" id="visualcanva-menu">
+                                <div class="Visualcanva-item">Musikplayer</div>
+                                <div class="Visualcanva-item">Desktop</div>
+                            </div>
+                            <div class="Visualizer-design" onclick="Visualdesign()"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Visualizer-design</p></div>
+                            <div class="Visualdesign-menu" id="visualdesign-menu">
+                                <div class="Visualdesign-item">Bars</div>
+                                <div class="Visualdesign-item">waves</div>
+                            </div> -->
+                        </div>
                         <br>
                         <p data-i18n="settings_audio">Audio</p>
-                        <div class="Settingsbox-actions"><h2>In arbeit :)</h2></div>
+                        <div class="Settingsbox-actions">
+                            <p data-i18n="Musik-span">Musik: <span id="Volume-value"></span>%</p>
+                            <div class="Volume-silder">
+                                <input class="vl-silder" id="Vl-silder" type="range" value="35" min="0" max="100">
+                            </div>
+                            <p data-i18n="InMusik-span">Inaktiv tab: <span id="iVolume-value"></span>%</p>
+                            <div class="Volume-silder">
+                                <input class="ivl-silder" id="IVl-silder" type="range" value="12" min="0" max="100">
+                            </div>
+                        </div>
                         <br>
                         <p data-i18n="settings_nuke_zone">Atombombe zone</p>
                         <div class="Settingsbox-actions">
@@ -160,7 +197,7 @@
         <!-- info zeiger-->
          <div class="Infooverlay" id="Info-overlay">
             <div class="Info-content">
-                <div class="Info-action"><p>Version: 0.04 (PREVIEW)</p></div>
+                <div class="Info-action"><p>Version: 0.05 (PREVIEW)</p></div>
                 <button class="github-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')">Repo besuchen!</button>
             </div>
           </div>
@@ -182,14 +219,17 @@
                     <span data-i18n="musicplayer_no_artist" id="Musikkünstler">Kein Musikkünstler! :(</span>
                 </div>
 
-                <div class="Musikplayer-hochladen" id="musikplayer-hochladen" onclick="Musikplayer_hochladen()">
+                <!-- <div class="Musikplayer-controll"></div> -->
+
+                <div class="Musikplayer-hochladen" id="musikplayer-hochladen">
                     <img src="Res/Bild/Icon/Desktop/Musikplayer/upload_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
                     <p data-i18n="musicplayer_upload">Hochladen dein Musik!</p>
                 </div>
+                <div class="Musikplayer-upload-menu" id="musikplayer-upload-menu"><h2>Ziehe oder klicke hier rein!</h2></div>
 
-                <div class="Musikplayer-dropdown-menu" id="musikplayer-dropdown-menu" onclick="Musikplayer_playlist()">
+                <div class="Musikplayer-dropdown-menu" id="musikplayer-dropdown-menu">
                     <img id="Musikplayer-dropdown-img" src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
-                    <p data-i18n="musicplayer_playlist">Dein playlist! [to do: playlist erstellt]</p>
+                    <p data-i18n="musicplayer_playlist">Dein playlist!</p>
                 </div>
                 <div class="Musikplayer-dp-menu" id="musikplayer-dp-menu"><h2 data-i18n="empty_playlist">Super duper leer playlist... (╥ ᴗ ╥)</h2></div>
             </div>
@@ -224,6 +264,9 @@
             <p>AstrieOS [INDEV] | Desktop exklusiv</p>
           </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    <script src="Java/einstellungen.js"></script>
+    <script src="Java/musikplayer.js"></script>
     <script src="Java/übersetztung.js"></script>
     <script src="Java/toggle.js"></script>
     <script>
@@ -291,6 +334,15 @@
             }
             image.src = URL.createObjectURL(event.target.files[0]);
         };
+
+        // Silder volume und effekt
+        var slider = document.getElementById("Vl-silder");
+        var output = document.getElementById("Volume-value");
+        output.innerHTML = slider.value;
+
+        slider.oninput = function() {
+        output.innerHTML = this.value;
+        }
 
         // Keine ahung für diesen...
         function updateMusicInfo(title, artist) {

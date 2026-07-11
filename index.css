@@ -5,7 +5,7 @@ body {
     cursor: default;
     -webkit-tap-highlight-color: transparent;
     background-attachment: fixed;
-    background-image: url(/Res/Bild/Hintergrund/Astrie-hintergrund-v2.png);
+    background-image: url(Res/Bild/Hintergrund/AstrieOS-offziellgrund.png);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -117,7 +117,7 @@ body {
     text-align: center;
 }
 
-#uhrzeit {
+#uhrzeit{
     padding: 8px 14px;
     border-radius: 12px;
     transition: all 0.1s ease;
@@ -135,7 +135,6 @@ body {
     padding-right: 8px;
     justify-content: right;
     align-content: right;
-    
 }
 
 .Topbar-user img, .Topbar-info img, .Topbar-musik img {
@@ -409,7 +408,7 @@ body {
     width: 20rem;
     position: fixed;
     top: 80px;
-    right: 8px;
+    right: -8px;
     padding: 12px;
     background-color: #e2a0ff;
     border-radius: 14px;
@@ -419,7 +418,7 @@ body {
 
 .Musikplayer-cover img {
     width: 100%;
-    height: 150px;
+    height: 180px;
     border-radius: 12px;
     object-fit: cover;
     background-position: center;
@@ -427,14 +426,72 @@ body {
     background-size: cover;
 }
 
-.Musikplayer-menü {
+.Musikplayer-menü, .Musikplayer-controll {
     margin-top: 8px;
     margin-bottom: 8px;
     padding: 18px 32px;
     border-radius: 12px;
     background-color: #9a6dad;
     color: #f0c6ff;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
     text-align: center;
+    position: relative;
+}
+
+.Musikplayer-menü span {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.Musikplayer-menü span.marquee {
+    animation: marquee-scroll var(--marquee-dur, 8s) linear infinite;
+    text-overflow: clip;
+}
+
+@keyframes marquee-scroll {
+    0%, 12% { transform: translateX(0); }
+    88%, 100% { transform: translateX(var(--marquee-dist, -100px)); }
+}
+
+
+#musikplayer-dp-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    margin-top: 8px;
+}
+
+#musikplayer-dp-menu.open {
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#musikplayer-upload-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    border: 2px dashed rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 0;
+    text-align: center;
+    cursor: pointer;
+}
+
+#musikplayer-upload-menu.open {
+    max-height: 200px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #Musiktitle {
@@ -460,7 +517,7 @@ body {
     font-weight: 500;
 }
 
-.Musikplayer-dp-menu, .Sp-dp-menu, .Keybind-dp-menu {
+.Musikplayer-dp-menu, .Sp-dp-menu, .Keybind-dp-menu, .Thread-menu, .Limit-menu, .Visualcanva-menu, .Visualdesign-menu {
     margin-top: 8px;
     margin-bottom: 8px;
     display: none;
@@ -475,20 +532,235 @@ body {
     animation: coolslider 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.Musikplayer-dp-menu h2, .Sp-dp-menu h2 {
+.Musikplayer-upload-menu {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border: dashed 2px #f0c6ff;
+    border-radius: 12px;
+    background-color: #876198;
+    color: #f0c6ff;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    animation: coolslider 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.Musikplayer-dp-menu h2, .Sp-dp-menu h2, .Musikplayer-upload-menu h2 {
     font-size: 1rem;
 }
 
-.Musikplayer-dp-menu:hover, .Sp-dp-menu:hover, .Keybind-dp-menu:hover {
+.Musikplayer-upload-menu:hover {
+    border: dashed 2px #f0c6ff;
+}
+
+.Musikplayer-dp-menu:hover, .Sp-dp-menu:hover, .Keybind-dp-menu:hover, .Thread-menu:hover, .Limit-menu:hover, .Visualcanva-menu:hover, .Visualdesign-menu:hover {
     background-color: #a879bd;
     box-shadow: 0 0 0 2px #ffffff;
 }
 
-.Musikplayer-dp-menu.open {
+#musikplayer-dp-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    margin-top: 8px;
+}
+
+#musikplayer-dp-menu.open {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    max-height: 360px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-right: 6px; 
+}
+
+.playlist-scroll {
+    overflow-y: scroll;
+    flex: 1;
+    min-height: 0;
+    padding-right: 4px;
+}
+
+.playlist-scroll::-webkit-scrollbar {
+    display: block;
+    width: 5px;
+}
+
+.playlist-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    margin: 4px 0;
+}
+
+.playlist-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 10px;
+}
+
+.playlist-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#musikplayer-upload-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    border: 2px dashed rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 0;
+    text-align: center;
+    cursor: pointer;
+}
+
+#musikplayer-upload-menu.open {
+    max-height: 200px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+}
+
+.playlist-clear {
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.playlist-clear:hover {
+    background: rgba(255, 107, 107, 0.2);
+}
+
+.playlist-item {
+    width: 17rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    min-height: 56px;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Gradient-Overlay über dem Cover */
+.playlist-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: linear-gradient(to right, rgba(154, 109, 173, 0.95) 0%, rgba(154, 109, 173, 0.75) 50%, rgba(154, 109, 173, 0.4) 100%);
+    z-index: 1;
+    transition: background 0.2s ease;
+}
+
+.playlist-item:hover::before {
+    background: linear-gradient(to right, rgba(176, 125, 198, 0.95) 0%, rgba(176, 125, 198, 0.75) 50%, rgba(176, 125, 198, 0.4) 100%);
+}
+
+.playlist-item.active::before {
+    background: linear-gradient(to right, rgba(255, 105, 180, 0.9) 0%, rgba(255, 105, 180, 0.6) 50%, rgba(255, 105, 180, 0.3) 100%);
+}
+
+/* Alles was vorne ist */
+.playlist-item > * {
+    position: relative;
+    z-index: 2;
+}
+
+.playlist-item:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.playlist-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.playlist-meta {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.playlist-title {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.playlist-artist {
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.playlist-delete {
+    background: rgba(0,0,0,0.2);
+    border: none;
+    color: rgba(255,255,255,0.7);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+    border-radius: 6px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 3;
+}
+
+.playlist-item:hover .playlist-delete {
+    opacity: 1;
+}
+
+.playlist-delete:hover {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.2);
+}
+
+
+.Musikplayer-dp-menu.open, .Musikplayer-upload-menu.open {
     display: flex;
 }
 
-.Sp-dp-menu.open, .Keybind-dp-menu.open {
+.Sp-dp-menu.open, .Keybind-dp-menu.open, .Thread-menu.open, .Limit-menu.open, .Visualcanva-menu.open, .Visualdesign-menu.open {
     display: block;
 }
 
@@ -506,7 +778,7 @@ body {
     color: #876198;
 }
 
-.Sprache-item {
+.Sprache-item, .Thread-item, .Limit-item, .Visualcanva-item, .Visualdesign-item {
     margin-top: 8px;
     margin-bottom: 8px;
     padding: 8px 12px;
@@ -514,7 +786,7 @@ body {
     cursor: pointer;
 }
 
-.Sprache-item:hover {
+.Sprache-item:hover, .Thread-item:hover, .Limit-item:hover, .Visualcanva-item:hover, .Visualdesign-item:hover {
     background-color: #e2a0ff;
     color: #876198;
 }
@@ -600,7 +872,7 @@ body {
     box-shadow: 0 0 0 2px #ffffff;
 }
 
-.Release-button {
+.Release-button, .Render-fps-zeigen {
     margin-top: 8px;
     margin-bottom: 8px;
     padding: 14px 18px;
@@ -612,11 +884,11 @@ body {
     transition: all 0.1s ease;
 }
 
-.Release-button:hover {
+.Release-button:hover, .Render-fps-zeigen:hover {
     box-shadow: 0 0 0 2px #ffffff;
 }
 
-.Sprachedropdown-button {
+.Sprachedropdown-button, .Render-fps, .Render-thread, .Visualizer-canva, .Visualizer-design {
     display: flex;
     gap: 12px;
     margin-top: 8px;
@@ -630,7 +902,7 @@ body {
     transition: all 0.1s ease;
 }
 
-.Sprachedropdown-button:hover {
+.Sprachedropdown-button:hover, .Render-fps:hover, .Render-thread:hover, .Visualizer-canva:hover, .Visualizer-design:hover {
     box-shadow: 0 0 0 2px #ffffff;
 }
 
@@ -657,6 +929,35 @@ body {
 
 .Settingsoverlay.Settings-active .Settings-content, .Kontowechsenoverlay.Kontowechsen-active .Kontowechsen-content {
     transform: translateX(0%);
+}
+
+.Volume-silder, .iVolume-silder {
+    width: 100%;
+}
+
+.vl-silder, .ivl-silder {
+    appearance: none;
+    width: 100%;
+    height: 38px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    outline: none;
+    border-radius: 12px;
+    background-color: #745383;
+    transition: box-shadow 0.1s ease;
+}
+
+.vl-silder::-webkit-slider-thumb, .ivl-silder::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 38px;
+    width: 8px;
+    border-radius: 22px;
+    background-color: #f5b6ff;
+}
+
+.vl-silder:hover, .ivl-silder:hover {
+    box-shadow: 0 0 0 2px #ffffff;
 }
 
 .atombombe-button {

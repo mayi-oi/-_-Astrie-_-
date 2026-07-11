@@ -50,5 +50,20 @@ function Keybindtoggle() {
     if (dropdown) dropdown.classList.toggle('open');
 }
 
+function Musikplayer_hochladen() {
+    const dropdown = document.getElementById('musikplayer-upload-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
+function Visualcanva() {
+    const dropdown = document.getElementById('visualcanva-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
+function Visualdesign() {
+    const dropdown = document.getElementById('visualdesign-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
 // init
 window.addEventListener('DOMContentLoaded', init)
