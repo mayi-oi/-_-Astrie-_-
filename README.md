@@ -3,4 +3,7 @@
 # AstrieOS!*
 Willkommen zum AstrieOS!
 <br>AstrieOS ist ein joke Projekt würde nicht wirklich ernst als Betriebssystem auf den Webseiten lol
+
+## Warum ist repo existiert?
+Wegen den [musikplayer](https://github.com/mayi-oi/Pfandkuchen/blob/main/musikplayer.html) ist super wirklich lang und complex lol
 <p align=center>Mayi-oi 2026
