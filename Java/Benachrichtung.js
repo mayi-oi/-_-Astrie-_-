@@ -5,6 +5,7 @@ class BenachrichtungSystem {
         this.lastCommitSha = localStorage.getItem('astrie_last_commit') || null;
         this.checkInterval = null;
         this.audioCtx = null;
+        this.apiFailed = false;
         this.init();
     }
 
@@ -17,7 +18,6 @@ class BenachrichtungSystem {
         this.bindClearButton();
     }
 
-    // === SOUND EFFEKTE ===
     playSound(type = 'default') {
         try {
             if (!this.audioCtx) {
@@ -38,8 +38,7 @@ class BenachrichtungSystem {
                     osc.frequency.setValueAtTime(783.99, now + 0.2);
                     gain.gain.setValueAtTime(0.15, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                    osc.start(now);
-                    osc.stop(now + 0.4);
+                    osc.start(now); osc.stop(now + 0.4);
                     break;
                 case 'todo-done':
                     osc.type = 'sine';
@@ -47,8 +46,7 @@ class BenachrichtungSystem {
                     osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
                     gain.gain.setValueAtTime(0.12, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                    osc.start(now);
-                    osc.stop(now + 0.3);
+                    osc.start(now); osc.stop(now + 0.3);
                     break;
                 case 'build':
                     osc.type = 'triangle';
@@ -56,8 +54,7 @@ class BenachrichtungSystem {
                     osc.frequency.linearRampToValueAtTime(150, now + 0.3);
                     gain.gain.setValueAtTime(0.1, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                    osc.start(now);
-                    osc.stop(now + 0.4);
+                    osc.start(now); osc.stop(now + 0.4);
                     break;
                 case 'clear':
                     osc.type = 'sine';
@@ -65,23 +62,18 @@ class BenachrichtungSystem {
                     osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
                     gain.gain.setValueAtTime(0.08, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now);
-                    osc.stop(now + 0.25);
+                    osc.start(now); osc.stop(now + 0.25);
                     break;
                 default:
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(523.25, now);
                     gain.gain.setValueAtTime(0.1, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now);
-                    osc.stop(now + 0.2);
+                    osc.start(now); osc.stop(now + 0.2);
             }
-        } catch(e) {
-            console.log('Sound nicht verfügbar:', e);
-        }
+        } catch(e) { /* Sound nicht verfügbar = egal */ }
     }
 
-    // === TODO PARSER ===
     parseTodos() {
         const todoBox = document.querySelector('.Settingsbox-todo');
         if (!todoBox) return;
@@ -113,14 +105,27 @@ class BenachrichtungSystem {
         setInterval(() => this.parseTodos(), 5000);
     }
 
-    // === GITHUB VIA NETLIFY FUNCTION ===
+    // === DIREKTE GITHUB API (KEIN PROXY NÖTIG!) ===
     async fetchLatestCommit() {
         try {
-            // Nutzt Netlify Function statt direkter GitHub API = kein Rate-Limit!
-            const response = await fetch('/.netlify/functions/github-proxy');
-            if (!response.ok) throw new Error('Proxy Fehler');
+            // Direkter Aufruf an GitHub - CORS ist für öffentliche Repos erlaubt!
+            const response = await fetch('https://api.github.com/repos/mayi-oi/-_-Astrie-_-/commits?per_page=1', {
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json',
+                    'User-Agent': 'AstrieOS-NotificationSystem'
+                }
+            });
+
+            if (!response.ok) {
+                // Stilles Failen - kein Error in Console
+                this.apiFailed = true;
+                return null;
+            }
+
             const data = await response.json();
             if (!data || data.length === 0) return null;
+
+            this.apiFailed = false;
             return {
                 sha: data[0].sha,
                 message: data[0].commit.message,
@@ -129,28 +134,39 @@ class BenachrichtungSystem {
                 url: data[0].html_url
             };
         } catch (error) {
-            console.error('GitHub Fetch Fehler:', error);
+            // Stilles Failen - kein roter Error
+            this.apiFailed = true;
             return null;
         }
     }
 
     async startGitHubPolling() {
+        // Erster Check sofort
         await this.checkCommits();
-        this.checkInterval = setInterval(() => this.checkCommits(), 60000);
+
+        // Alle 2 Minuten (120 Sekunden) = max 30 req/h
+        // Das ist sicher unter dem 60 req/h Limit für unauthentifizierte Requests!
+        this.checkInterval = setInterval(() => this.checkCommits(), 120000);
     }
 
     async checkCommits() {
         const commit = await this.fetchLatestCommit();
         if (!commit) return;
+
+        // Erster Start: speichere SHA ohne Benachrichtigung
         if (!this.lastCommitSha) {
             this.lastCommitSha = commit.sha;
             localStorage.setItem('astrie_last_commit', commit.sha);
             return;
         }
+
+        // Neuer Commit!
         if (commit.sha !== this.lastCommitSha) {
             this.lastCommitSha = commit.sha;
             localStorage.setItem('astrie_last_commit', commit.sha);
+
             const timeAgo = this.formatTimeAgo(new Date(commit.date));
+
             this.add({
                 type: 'commit',
                 title: '🚀 Neuer Commit!',
@@ -161,6 +177,8 @@ class BenachrichtungSystem {
                 color: '#a855f7'
             });
             this.playSound('commit');
+
+            // Build-Simulation nach 3 Sekunden
             setTimeout(() => this.simulateBuild(commit.message), 3000);
         }
     }
@@ -177,6 +195,7 @@ class BenachrichtungSystem {
             id: `build-${buildId}`
         });
         this.playSound('build');
+
         setTimeout(() => {
             this.add({
                 type: 'build-success',
@@ -188,6 +207,34 @@ class BenachrichtungSystem {
             });
             this.playSound('todo-done');
         }, 5000);
+    }
+
+    // === MANUELLER TEST (für die Console!) ===
+    async testCommit() {
+        const commit = await this.fetchLatestCommit();
+        if (commit) {
+            console.log('✅ GitHub API funktioniert! Letzter Commit:', commit.message);
+            // Simuliere eine Benachrichtung mit echten Daten
+            this.add({
+                type: 'commit',
+                title: '🧪 Test-Commit!',
+                message: `${commit.author}: "${commit.message}"`,
+                detail: 'Manuell getestet',
+                url: commit.url,
+                color: '#a855f7'
+            });
+            this.playSound('commit');
+        } else {
+            console.log('⚠️ GitHub API nicht erreichbar (Rate-Limit?)');
+            // Fallback: Zeige Test-Benachrichtung ohne API
+            this.add({
+                type: 'test',
+                title: '🧪 Test-Modus',
+                message: 'API-Limit erreicht oder Offline',
+                detail: 'Aber das System funktioniert! :D',
+                color: '#f59e0b'
+            });
+        }
     }
 
     // === BENACHRICHTUNGS MANAGEMENT ===
@@ -232,7 +279,6 @@ class BenachrichtungSystem {
         }
     }
 
-    // === STORAGE ===
     saveNotifications() {
         localStorage.setItem('astrie_notifications', JSON.stringify(this.notifications));
     }
@@ -246,7 +292,6 @@ class BenachrichtungSystem {
         }
     }
 
-    // === RENDERING ===
     render() {
         const container = document.querySelector('.Benachrichten-content');
         if (!container) return;
@@ -259,7 +304,9 @@ class BenachrichtungSystem {
             list.innerHTML = `
                 <div class="Benachrichten-empty">
                     <p>Keine Benachrichtungen! (⎚-⎚)</p>
-                    <p style="font-size: 0.8rem; opacity: 0.6;">Warte auf Commits oder erledige Todos...</p>
+                    <p style="font-size: 0.8rem; opacity: 0.6;">
+                        ${this.apiFailed ? 'GitHub API aktuell nicht erreichbar...' : 'Warte auf Commits oder erledige Todos...'}
+                    </p>
                 </div>
             `;
         } else {
@@ -310,7 +357,6 @@ class BenachrichtungSystem {
         }
     }
 
-    // === UTILS ===
     formatTimeAgo(date) {
         const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
         if (seconds < 60) return 'gerade eben';
@@ -331,6 +377,8 @@ let benachrichtungSystem;
 
 document.addEventListener('DOMContentLoaded', () => {
     benachrichtungSystem = new BenachrichtungSystem();
+
+    // Willkommensnachricht beim ersten Mal
     if (!localStorage.getItem('astrie_welcome_sent')) {
         setTimeout(() => {
             benachrichtungSystem.add({
