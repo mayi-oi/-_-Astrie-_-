@@ -1,0 +1,254 @@
+.wallpaper-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    overflow: hidden;
+    min-height: 56px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Gradient-Overlay über dem Hintergrundbild */
+.wallpaper-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: linear-gradient(to right, rgba(154, 109, 173, 0.95) 0%, rgba(154, 109, 173, 0.75) 50%, rgba(154, 109, 173, 0.4) 100%);
+    z-index: 1;
+    transition: background 0.2s ease;
+}
+
+.wallpaper-item:hover::before {
+    background: linear-gradient(to right, rgba(176, 125, 198, 0.95) 0%, rgba(176, 125, 198, 0.75) 50%, rgba(176, 125, 198, 0.4) 100%);
+}
+
+.wallpaper-item.active-wallpaper::before {
+    background: linear-gradient(to right, rgba(255, 105, 180, 0.9) 0%, rgba(255, 105, 180, 0.6) 50%, rgba(255, 105, 180, 0.3) 100%);
+}
+
+/* Alles was vorne ist */
+.wallpaper-item > * {
+    position: relative;
+    z-index: 2;
+}
+
+.wallpaper-item:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.wallpaper-item.active-wallpaper {
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+/* --- Preview Thumbnail (kleines Icon links) --- */
+
+
+/* Live Preview ohne Hintergrundbild */
+.live-preview {
+    background: linear-gradient(135deg, #1a0a2e 0%, #4a1a6e 50%, #0a1a3e 100%) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.live-preview::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 100, 200, 0.3) 50%, transparent 70%);
+    animation: liveShimmer 2s infinite;
+}
+
+@keyframes liveShimmer {
+    0% { transform: translateX(-100%) translateY(-100%); }
+    100% { transform: translateX(100%) translateY(100%); }
+}
+
+.live-badge {
+    position: relative;
+    z-index: 1;
+    font-size: 8px;
+    font-weight: bold;
+    color: #ff69b4;
+    background: rgba(0,0,0,0.5);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+/* --- Text Container mit Auto-Scroll --- */
+.wallpaper-meta {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding-right: 32px; /* Platz für Delete-Button */
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.wallpaper-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Auto-Scroll für lange Titel */
+.wallpaper-title.scroll {
+    display: inline-block;
+    animation: wallpaper-scroll var(--scroll-dur, 18s) linear infinite;
+    text-overflow: clip;
+    padding-right: 20px;
+}
+
+@keyframes wallpaper-scroll {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.wallpaper-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    margin-top: 2px;
+}
+
+/* --- Delete Button --- */
+.wallpaper-delete {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.2);
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s ease;
+    z-index: 3;
+    border: none;
+    line-height: 1;
+}
+
+.wallpaper-item:hover .wallpaper-delete {
+    opacity: 1;
+}
+
+.wallpaper-delete:hover {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.3);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* --- Live Wallpaper Toggle --- */
+.Live-papier {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    background-color: #745383;
+    text-align: center;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.Live-papier:hover {
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+.Live-papier-menu {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: none;
+    border-radius: 12px;
+    background-color: #876198;
+    color: #f0c6ff;
+    transition: all 0.1s ease;
+    animation: coolslider 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 4px 8px;
+}
+
+.Live-papier-menu.open {
+    display: block;
+}
+
+/* Desktop Wallpaper Container */
+.Desktop-wallpaper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.Desktop-wallpaper video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+}
+
+.Desktop-wallpaper canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Nutzer Upload Button */
+.Nutzter-laden {
+    position: relative;
+    overflow: hidden;
+}
+
+.Nutzter-laden::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.Nutzter-laden:hover::after {
+    left: 100%;
+}
+
+/* Wallpaper Wechsel Transition */
+.Desktop-wallpaper {
+    transition: opacity 0.5s ease;
+}

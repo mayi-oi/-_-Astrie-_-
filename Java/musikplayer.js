@@ -1,8 +1,4 @@
-/* Todo list 3000
-    1. Visualcanva-teil Musikplayer oder desktop
-    2. Visualdesign mit waves erstellt
-    3. Musikcontroll mit icon 'Res/Bild/Icon/Desktop/Musikplayer' und Fortschrittbalken
-*/
+/* .osz Unterstützung aktiviert! ~Astrie */
 
 const MUSIC_CONFIG = {
     defaultCover: 'Res/Bild/Hintergrund/astrie-hintergrund.png',
@@ -117,7 +113,7 @@ function initUpload() {
         e.stopPropagation();
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = 'audio/*';
+        input.accept = 'audio/*,.osz';
         input.multiple = true;
         input.onchange = (e) => {
             processFiles(e.target.files);
@@ -148,26 +144,159 @@ function initUpload() {
 }
 
 async function processFiles(fileList) {
-    const files = Array.from(fileList).filter(f => f.type.startsWith('audio/'));
+    const files = Array.from(fileList);
     if (files.length === 0) return;
 
     for (const file of files) {
-        const tags = await extractTags(file);
-        const objectUrl = URL.createObjectURL(file);
-        playlist.push({
-            id: Date.now() + Math.random(),
-            file,
-            url: objectUrl,
-            title: tags.title,
-            artist: tags.artist,
-            cover: tags.cover || MUSIC_CONFIG.defaultCover
-        });
+        if (file.name.toLowerCase().endsWith('.osz')) {
+            if (typeof JSZip === 'undefined') {
+                console.error('JSZip nicht geladen – .osz Unterstützung nicht verfügbar');
+                continue;
+            }
+            await processOszFile(file);
+        } else if (file.type.startsWith('audio/')) {
+            const tags = await extractTags(file);
+            const objectUrl = URL.createObjectURL(file);
+            playlist.push({
+                id: Date.now() + Math.random(),
+                file,
+                url: objectUrl,
+                title: tags.title,
+                artist: tags.artist,
+                cover: tags.cover || MUSIC_CONFIG.defaultCover
+            });
+        }
     }
 
     renderPlaylist();
     if (currentTrackIndex === -1 && playlist.length > 0) {
         loadTrack(0);
     }
+}
+
+// === .osz Beatmap Support ===
+async function processOszFile(file) {
+    try {
+        const zip = await JSZip.loadAsync(file);
+
+        const osuFiles = [];
+        const audioFiles = [];
+        const imageFiles = [];
+
+        zip.forEach((relativePath, zipEntry) => {
+            if (relativePath.endsWith('.osu')) {
+                osuFiles.push(zipEntry);
+            } else if (/\.(mp3|ogg|wav|flac)$/i.test(relativePath)) {
+                audioFiles.push(zipEntry);
+            } else if (/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(relativePath)) {
+                imageFiles.push(zipEntry);
+            }
+        });
+
+        if (audioFiles.length === 0) {
+            console.warn('Keine Audio-Datei in .osz gefunden');
+            return;
+        }
+
+        let title = cleanFilename(file.name).replace(/\.osz$/i, '');
+        let artist = 'Unbekannt';
+        let audioFilename = '';
+        let bgFilename = '';
+
+        if (osuFiles.length > 0) {
+            const osuContent = await osuFiles[0].async('text');
+            const metadata = parseOsuFile(osuContent);
+            title = metadata.title || title;
+            artist = metadata.artist || artist;
+            audioFilename = metadata.audioFilename || '';
+            bgFilename = metadata.background || '';
+        }
+
+        let audioEntry = audioFiles[0];
+        if (audioFilename) {
+            const found = audioFiles.find(f => {
+                const name = f.name.split('/').pop();
+                return name.toLowerCase() === audioFilename.toLowerCase();
+            });
+            if (found) audioEntry = found;
+        }
+
+        let cover = MUSIC_CONFIG.defaultCover;
+        if (bgFilename) {
+            const bgEntry = imageFiles.find(f => {
+                const name = f.name.split('/').pop();
+                return name.toLowerCase() === bgFilename.toLowerCase();
+            });
+            if (bgEntry) {
+                const bgBlob = await bgEntry.async('blob');
+                cover = URL.createObjectURL(bgBlob);
+            }
+        } else if (imageFiles.length > 0) {
+            const bgBlob = await imageFiles[0].async('blob');
+            cover = URL.createObjectURL(bgBlob);
+        }
+
+        const audioBlob = await audioEntry.async('blob');
+        const audioExt = audioEntry.name.split('.').pop();
+        const audioFile = new File([audioBlob], `${title}.${audioExt}`, { type: `audio/${audioExt}` });
+        const objectUrl = URL.createObjectURL(audioFile);
+
+        const tags = await extractTags(audioFile);
+
+        playlist.push({
+            id: Date.now() + Math.random(),
+            file: audioFile,
+            url: objectUrl,
+            title: tags.title !== cleanFilename(audioFile.name) ? tags.title : title,
+            artist: tags.artist !== 'Unbekannt' ? tags.artist : artist,
+            cover: cover
+        });
+
+    } catch (err) {
+        console.error('Fehler beim Verarbeiten der .osz Datei:', err);
+    }
+}
+
+function parseOsuFile(content) {
+    const lines = content.split(/\r?\n/);
+    const metadata = {};
+    let section = '';
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('//')) continue;
+
+        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+            section = trimmed.slice(1, -1);
+            continue;
+        }
+
+        if (section === 'General') {
+            if (trimmed.startsWith('AudioFilename:')) {
+                metadata.audioFilename = trimmed.substring('AudioFilename:'.length).trim();
+            }
+        } else if (section === 'Metadata') {
+            if (trimmed.startsWith('TitleUnicode:')) {
+                metadata.titleUnicode = trimmed.substring('TitleUnicode:'.length).trim();
+            } else if (trimmed.startsWith('Title:')) {
+                metadata.title = trimmed.substring('Title:'.length).trim();
+            } else if (trimmed.startsWith('ArtistUnicode:')) {
+                metadata.artistUnicode = trimmed.substring('ArtistUnicode:'.length).trim();
+            } else if (trimmed.startsWith('Artist:')) {
+                metadata.artist = trimmed.substring('Artist:'.length).trim();
+            }
+        } else if (section === 'Events') {
+            if (trimmed.startsWith('0,') || trimmed.startsWith('1,')) {
+                const match = trimmed.match(/"([^"]+)"/);
+                if (match) metadata.background = match[1];
+            }
+        }
+    }
+
+    if (metadata.titleUnicode) metadata.title = metadata.titleUnicode;
+    if (metadata.artistUnicode) metadata.artist = metadata.artistUnicode;
+
+    return metadata;
 }
 
 // === Playlist UI ===
@@ -241,7 +370,12 @@ function removeTrack(index) {
 
 function clearPlaylist() {
     stopPlayback();
-    playlist.forEach(t => URL.revokeObjectURL(t.url));
+    playlist.forEach(t => {
+        URL.revokeObjectURL(t.url);
+        if (t.cover && t.cover.startsWith('blob:') && t.cover !== MUSIC_CONFIG.defaultCover) {
+            URL.revokeObjectURL(t.cover);
+        }
+    });
     playlist = [];
     currentTrackIndex = -1;
     renderPlaylist();

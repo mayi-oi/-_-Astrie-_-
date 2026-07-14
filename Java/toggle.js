@@ -18,6 +18,9 @@ document.getElementById('Settings-overlay').addEventListener('click', (e) => { i
 function Kontoswitch() { document.querySelector('.Kontowechsenoverlay').classList.toggle('Kontowechsen-active'); }
 document.getElementById('Kontowechsen-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Kontowechsen-overlay')) Kontoswitch(); });
 
+function Notfitoggle() { document.querySelector('.Benachrichtenoverlay').classList.toggle('Benachrichtgungen-active'); }
+document.getElementById('Benachrichten-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Benachrichten-overlay')) Notfitoggle(); });
+
 // Keybind shortcuts
 function init() {
     document.addEventListener('keydown', handleKeydown);
@@ -31,6 +34,7 @@ function handleKeydown(e) {
             case 'KeyM': musiktoggle(); break;
             case 'KeyS': Settingtoggle(); break;
             case 'KeyK': Kontoswitch(); break;
+            case 'KeyN': Notfitoggle(); break;
         }
     }
 
@@ -62,6 +66,21 @@ function Visualcanva() {
 
 function Visualdesign() {
     const dropdown = document.getElementById('visualdesign-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
+function desktoptoggle() {
+    const dropdown = document.getElementById('desktop-offizell-papier-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
+function nutzer_desktoptoggle() {
+    const dropdown = document.getElementById('nutzer-papier-menu');
+    if (dropdown) dropdown.classList.toggle('open');
+}
+
+function livetoggle() {
+    const dropdown = document.getElementById('live-papier-menu');
     if (dropdown) dropdown.classList.toggle('open');
 }
 

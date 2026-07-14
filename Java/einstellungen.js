@@ -1,6 +1,6 @@
 // Todo list 3000:
-// 1. Singlecore und Multicore function (ich meinte wirklich)
-// 2. Fps limit function (das auch)
+// 1. Hintergrund mit normale und live hintergrund handel funticon
+// 2. Nutzter kann hochladen seine Hintergrund oder wähle den Pre-selection background!
 
 // --- Threading-Modus ---
 let threadMode = localStorage.getItem('astrie_thread_mode') || 'singlecore';
