@@ -1,5 +1,3 @@
-/* .osz Unterstützung aktiviert! ~Astrie */
-
 const MUSIC_CONFIG = {
     defaultCover: 'Res/Bild/Hintergrund/astrie-hintergrund.png',
     defaultVolume: 0.35,
@@ -9,12 +7,24 @@ const MUSIC_CONFIG = {
 let playlist = [];
 let currentTrackIndex = -1;
 let audioElement = null;
+let nextAudioElement = null;
 let audioCtx = null;
 let analyserNode = null;
-let gainNode = null;
+let masterGainNode = null;
+let currentGainNode = null;
+let nextGainNode = null;
 let mediaSource = null;
+let nextMediaSource = null;
 let visualizerFrame = null;
 let isVisualizerActive = false;
+let isCrossfading = false;
+const CROSSFADE_DURATION = 4;
+
+function dispatchMusicEvent(eventType, data = {}) {
+    window.dispatchEvent(new CustomEvent('astrie-music-event', {
+        detail: { eventType, data }
+    }));
+}
 
 const dom = {
     cover: document.getElementById('Musikcover'),
@@ -47,22 +57,39 @@ function ensureAudioContext() {
         analyserNode = audioCtx.createAnalyser();
         analyserNode.fftSize = 256;
         analyserNode.smoothingTimeConstant = 0.85;
-        gainNode = audioCtx.createGain();
-        gainNode.connect(audioCtx.destination);
+
+        masterGainNode = audioCtx.createGain();
+        masterGainNode.connect(audioCtx.destination);
+
+        currentGainNode = audioCtx.createGain();
+        currentGainNode.connect(analyserNode);
+
+        nextGainNode = audioCtx.createGain();
+        nextGainNode.connect(analyserNode);
+
+        analyserNode.connect(masterGainNode);
     }
 }
 
-function connectAudioElement() {
-    if (!audioElement || !audioCtx) return;
+function connectCurrentAudio() {
+    if (!audioElement || !audioCtx || !currentGainNode) return;
     if (mediaSource) {
         try { mediaSource.disconnect(); } catch(e) {}
     }
     mediaSource = audioCtx.createMediaElementSource(audioElement);
-    mediaSource.connect(analyserNode);
-    analyserNode.connect(gainNode);
+    mediaSource.connect(currentGainNode);
 }
 
-// === ID3 Tags (Cover, Titel, Künstler) ===
+function connectNextAudio() {
+    if (!nextAudioElement || !audioCtx || !nextGainNode) return;
+    if (nextMediaSource) {
+        try { nextMediaSource.disconnect(); } catch(e) {}
+    }
+    nextMediaSource = audioCtx.createMediaElementSource(nextAudioElement);
+    nextMediaSource.connect(nextGainNode);
+}
+
+// === ID3 Tags ===
 function extractTags(file) {
     return new Promise((resolve) => {
         if (typeof jsmediatags === 'undefined') {
@@ -102,13 +129,11 @@ function cleanFilename(name) {
 
 // === Upload & Drag & Drop ===
 function initUpload() {
-    // Toggle upload menu
     dom.uploadBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         dom.uploadMenu.classList.toggle('open');
     });
 
-    // File selection via click on dropzone
     dom.uploadMenu.addEventListener('click', (e) => {
         e.stopPropagation();
         const input = document.createElement('input');
@@ -122,7 +147,6 @@ function initUpload() {
         input.click();
     });
 
-    // Drag & Drop
     ['dragover', 'dragleave', 'drop'].forEach(eventName => {
         dom.uploadMenu.addEventListener(eventName, (e) => {
             e.preventDefault();
@@ -146,6 +170,7 @@ function initUpload() {
 async function processFiles(fileList) {
     const files = Array.from(fileList);
     if (files.length === 0) return;
+    dispatchMusicEvent('upload-start', { filename: files[0].name, total: files.length });
 
     for (const file of files) {
         if (file.name.toLowerCase().endsWith('.osz')) {
@@ -168,6 +193,11 @@ async function processFiles(fileList) {
         }
     }
 
+    dispatchMusicEvent('upload-done', { 
+        title: playlist[playlist.length - 1]?.title || 'Musik', 
+        count: files.length 
+    });
+
     renderPlaylist();
     if (currentTrackIndex === -1 && playlist.length > 0) {
         loadTrack(0);
@@ -178,19 +208,14 @@ async function processFiles(fileList) {
 async function processOszFile(file) {
     try {
         const zip = await JSZip.loadAsync(file);
-
         const osuFiles = [];
         const audioFiles = [];
         const imageFiles = [];
 
         zip.forEach((relativePath, zipEntry) => {
-            if (relativePath.endsWith('.osu')) {
-                osuFiles.push(zipEntry);
-            } else if (/\.(mp3|ogg|wav|flac)$/i.test(relativePath)) {
-                audioFiles.push(zipEntry);
-            } else if (/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(relativePath)) {
-                imageFiles.push(zipEntry);
-            }
+            if (relativePath.endsWith('.osu')) osuFiles.push(zipEntry);
+            else if (/\.(mp3|ogg|wav|flac)$/i.test(relativePath)) audioFiles.push(zipEntry);
+            else if (/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(relativePath)) imageFiles.push(zipEntry);
         });
 
         if (audioFiles.length === 0) {
@@ -214,33 +239,24 @@ async function processOszFile(file) {
 
         let audioEntry = audioFiles[0];
         if (audioFilename) {
-            const found = audioFiles.find(f => {
-                const name = f.name.split('/').pop();
-                return name.toLowerCase() === audioFilename.toLowerCase();
-            });
+            const found = audioFiles.find(f => f.name.split('/').pop().toLowerCase() === audioFilename.toLowerCase());
             if (found) audioEntry = found;
         }
 
         let cover = MUSIC_CONFIG.defaultCover;
         if (bgFilename) {
-            const bgEntry = imageFiles.find(f => {
-                const name = f.name.split('/').pop();
-                return name.toLowerCase() === bgFilename.toLowerCase();
-            });
+            const bgEntry = imageFiles.find(f => f.name.split('/').pop().toLowerCase() === bgFilename.toLowerCase());
             if (bgEntry) {
-                const bgBlob = await bgEntry.async('blob');
-                cover = URL.createObjectURL(bgBlob);
+                cover = URL.createObjectURL(await bgEntry.async('blob'));
             }
         } else if (imageFiles.length > 0) {
-            const bgBlob = await imageFiles[0].async('blob');
-            cover = URL.createObjectURL(bgBlob);
+            cover = URL.createObjectURL(await imageFiles[0].async('blob'));
         }
 
         const audioBlob = await audioEntry.async('blob');
         const audioExt = audioEntry.name.split('.').pop();
         const audioFile = new File([audioBlob], `${title}.${audioExt}`, { type: `audio/${audioExt}` });
         const objectUrl = URL.createObjectURL(audioFile);
-
         const tags = await extractTags(audioFile);
 
         playlist.push({
@@ -272,19 +288,12 @@ function parseOsuFile(content) {
         }
 
         if (section === 'General') {
-            if (trimmed.startsWith('AudioFilename:')) {
-                metadata.audioFilename = trimmed.substring('AudioFilename:'.length).trim();
-            }
+            if (trimmed.startsWith('AudioFilename:')) metadata.audioFilename = trimmed.substring('AudioFilename:'.length).trim();
         } else if (section === 'Metadata') {
-            if (trimmed.startsWith('TitleUnicode:')) {
-                metadata.titleUnicode = trimmed.substring('TitleUnicode:'.length).trim();
-            } else if (trimmed.startsWith('Title:')) {
-                metadata.title = trimmed.substring('Title:'.length).trim();
-            } else if (trimmed.startsWith('ArtistUnicode:')) {
-                metadata.artistUnicode = trimmed.substring('ArtistUnicode:'.length).trim();
-            } else if (trimmed.startsWith('Artist:')) {
-                metadata.artist = trimmed.substring('Artist:'.length).trim();
-            }
+            if (trimmed.startsWith('TitleUnicode:')) metadata.titleUnicode = trimmed.substring('TitleUnicode:'.length).trim();
+            else if (trimmed.startsWith('Title:')) metadata.title = trimmed.substring('Title:'.length).trim();
+            else if (trimmed.startsWith('ArtistUnicode:')) metadata.artistUnicode = trimmed.substring('ArtistUnicode:'.length).trim();
+            else if (trimmed.startsWith('Artist:')) metadata.artist = trimmed.substring('Artist:'.length).trim();
         } else if (section === 'Events') {
             if (trimmed.startsWith('0,') || trimmed.startsWith('1,')) {
                 const match = trimmed.match(/"([^"]+)"/);
@@ -295,7 +304,6 @@ function parseOsuFile(content) {
 
     if (metadata.titleUnicode) metadata.title = metadata.titleUnicode;
     if (metadata.artistUnicode) metadata.artist = metadata.artistUnicode;
-
     return metadata;
 }
 
@@ -316,7 +324,6 @@ function renderPlaylist() {
 
     dom.dropdownMenu.innerHTML = '';
     
-    // Header (bleibt immer sichtbar!)
     const header = document.createElement('div');
     header.className = 'playlist-header';
     header.innerHTML = `
@@ -325,7 +332,6 @@ function renderPlaylist() {
     `;
     dom.dropdownMenu.appendChild(header);
 
-    // Scrollbarer Container für die Songs
     const scrollContainer = document.createElement('div');
     scrollContainer.className = 'playlist-scroll';
 
@@ -357,6 +363,16 @@ function removeTrack(index) {
         currentTrackIndex--;
     }
     
+    if (nextAudioElement) {
+        nextAudioElement.pause();
+        nextAudioElement.removeEventListener('canplay', onNextCanPlay);
+        nextAudioElement = null;
+    }
+    if (nextMediaSource) {
+        try { nextMediaSource.disconnect(); } catch(e) {}
+        nextMediaSource = null;
+    }
+    
     URL.revokeObjectURL(playlist[index].url);
     playlist.splice(index, 1);
     
@@ -366,6 +382,10 @@ function removeTrack(index) {
     }
     
     renderPlaylist();
+    
+    if (playlist.length > 0 && currentTrackIndex !== -1 && audioElement && !audioElement.paused) {
+        prepareNextTrack();
+    }
 }
 
 function clearPlaylist() {
@@ -385,10 +405,41 @@ function clearPlaylist() {
 function loadTrack(index) {
     if (index < 0 || index >= playlist.length) return;
     
+    isCrossfading = false;
+    
+    // Alten Track aufräumen
     if (audioElement) {
         audioElement.pause();
         audioElement.removeEventListener('ended', onTrackEnded);
         audioElement.removeEventListener('error', onTrackError);
+        audioElement.removeEventListener('timeupdate', onTimeUpdate);
+        audioElement.removeEventListener('canplay', onCurrentCanPlay);
+    }
+    if (mediaSource) {
+        try { mediaSource.disconnect(); } catch(e) {}
+        mediaSource = null;
+    }
+    
+    // Nächsten Track aufräumen
+    if (nextAudioElement) {
+        nextAudioElement.pause();
+        nextAudioElement.removeEventListener('canplay', onNextCanPlay);
+        nextAudioElement = null;
+    }
+    if (nextMediaSource) {
+        try { nextMediaSource.disconnect(); } catch(e) {}
+        nextMediaSource = null;
+    }
+    
+    // Gains zurücksetzen
+    const now = audioCtx ? audioCtx.currentTime : 0;
+    if (currentGainNode) {
+        currentGainNode.gain.cancelScheduledValues(now);
+        currentGainNode.gain.setValueAtTime(1, now);
+    }
+    if (nextGainNode) {
+        nextGainNode.gain.cancelScheduledValues(now);
+        nextGainNode.gain.setValueAtTime(0, now);
     }
 
     currentTrackIndex = index;
@@ -401,13 +452,8 @@ function loadTrack(index) {
     
     audioElement.addEventListener('ended', onTrackEnded);
     audioElement.addEventListener('error', onTrackError);
-    audioElement.addEventListener('canplay', () => {
-        connectAudioElement();
-        applyVolume();
-        audioElement.play().catch(console.error);
-        isVisualizerActive = true;
-        startVisualizer();
-    });
+    audioElement.addEventListener('timeupdate', onTimeUpdate);
+    audioElement.addEventListener('canplay', onCurrentCanPlay);
 
     dom.cover.src = track.cover;
     setMarquee(dom.title, track.title);
@@ -416,11 +462,170 @@ function loadTrack(index) {
     renderPlaylist();
 }
 
+function onCurrentCanPlay() {
+    if (!audioElement || audioElement.dataset.connected === 'true') return;
+    audioElement.dataset.connected = 'true';
+    
+    connectCurrentAudio();
+    applyVolume();
+    audioElement.play().catch(console.error);
+    isVisualizerActive = true;
+    startVisualizer();
+    
+    prepareNextTrack();
+}
+
+function prepareNextTrack() {
+    if (playlist.length <= 1) return;
+    
+    const nextIndex = (currentTrackIndex + 1) % playlist.length;
+    const track = playlist[nextIndex];
+    
+    if (nextAudioElement) {
+        nextAudioElement.pause();
+        nextAudioElement.removeEventListener('canplay', onNextCanPlay);
+        nextAudioElement = null;
+    }
+    if (nextMediaSource) {
+        try { nextMediaSource.disconnect(); } catch(e) {}
+        nextMediaSource = null;
+    }
+    
+    nextAudioElement = new Audio(track.url);
+    nextAudioElement.crossOrigin = 'anonymous';
+    nextAudioElement.preload = 'auto';
+    nextAudioElement.addEventListener('canplay', onNextCanPlay);
+    nextAudioElement.addEventListener('error', () => {
+        console.error('Fehler beim Laden des nächsten Tracks');
+        nextAudioElement = null;
+    });
+}
+
+function onNextCanPlay() {
+    if (!nextAudioElement || nextAudioElement.dataset.connected === 'true') return;
+    nextAudioElement.dataset.connected = 'true';
+    
+    connectNextAudio();
+    nextGainNode.gain.value = 0;
+}
+
+function onTimeUpdate() {
+    if (!audioElement || !audioElement.duration || isCrossfading || !nextAudioElement || nextAudioElement.readyState < 2) return;
+    
+    const remaining = audioElement.duration - audioElement.currentTime;
+    if (remaining <= CROSSFADE_DURATION) {
+        const fadeDuration = Math.max(0.5, remaining - 0.1);
+        startCrossfade(fadeDuration);
+    }
+}
+
+function startCrossfade(fadeDuration) {
+    if (isCrossfading || !audioCtx || !currentGainNode || !nextGainNode || !nextAudioElement) return;
+    isCrossfading = true;
+    
+    const now = audioCtx.currentTime;
+    const endTime = now + fadeDuration;
+    
+    // Current Track fade out
+    const currentVol = Math.max(currentGainNode.gain.value, 0.001);
+    currentGainNode.gain.setValueAtTime(currentVol, now);
+    currentGainNode.gain.exponentialRampToValueAtTime(0.001, endTime);
+    
+    // Next Track fade in
+    nextGainNode.gain.setValueAtTime(0.001, now);
+    nextGainNode.gain.exponentialRampToValueAtTime(1, endTime);
+    
+    // Next Track starten
+    nextAudioElement.play().catch(err => {
+        console.error('Fehler beim Starten des Crossfade:', err);
+        isCrossfading = false;
+    });
+    
+    setTimeout(() => finishCrossfade(), fadeDuration * 1000);
+}
+
+function finishCrossfade() {
+    if (!isCrossfading) return;
+    
+    // Alten Track stoppen
+    if (audioElement) {
+        audioElement.pause();
+        audioElement.removeEventListener('ended', onTrackEnded);
+        audioElement.removeEventListener('error', onTrackError);
+        audioElement.removeEventListener('timeupdate', onTimeUpdate);
+        audioElement.removeEventListener('canplay', onCurrentCanPlay);
+    }
+    if (mediaSource) {
+        try { mediaSource.disconnect(); } catch(e) {}
+        mediaSource = null;
+    }
+    
+    // Referenzen switchen
+    audioElement = nextAudioElement;
+    nextAudioElement = null;
+    
+    mediaSource = nextMediaSource;
+    nextMediaSource = null;
+    
+    // ═══════════════════════════════════════
+    // FIX #1: Neuen Track auf currentGainNode umverbinden!
+    // ═══════════════════════════════════════
+    if (mediaSource && currentGainNode) {
+        try { 
+            mediaSource.disconnect(); 
+            mediaSource.connect(currentGainNode);
+        } catch(e) {}
+    }
+    
+    // ═══════════════════════════════════════
+    // FIX #2: Alte scheduled values canceln
+    // ═══════════════════════════════════════
+    const now = audioCtx ? audioCtx.currentTime : 0;
+    if (currentGainNode) {
+        currentGainNode.gain.cancelScheduledValues(now);
+        currentGainNode.gain.setValueAtTime(1, now);
+    }
+    if (nextGainNode) {
+        nextGainNode.gain.cancelScheduledValues(now);
+        nextGainNode.gain.setValueAtTime(0, now);
+    }
+    
+    // Track-Index aktualisieren
+    currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+    
+    // UI aktualisieren
+    const track = playlist[currentTrackIndex];
+    dom.cover.src = track.cover;
+    setMarquee(dom.title, track.title);
+    setMarquee(dom.artist, track.artist);
+    renderPlaylist();
+    
+    // ═══════════════════════════════════════
+    // FIX #3: Listener nur hinzufügen wenn Track existiert
+    // ═══════════════════════════════════════
+    if (audioElement) {
+        audioElement.addEventListener('ended', onTrackEnded);
+        audioElement.addEventListener('error', onTrackError);
+        audioElement.addEventListener('timeupdate', onTimeUpdate);
+    }
+    
+    isCrossfading = false;
+    isVisualizerActive = true;
+    
+    // Nächsten Track vorbereiten
+    prepareNextTrack();
+}
+
 function stopPlayback() {
     if (audioElement) {
         audioElement.pause();
         audioElement = null;
     }
+    if (nextAudioElement) {
+        nextAudioElement.pause();
+        nextAudioElement = null;
+    }
+    isCrossfading = false;
     isVisualizerActive = false;
     stopVisualizer();
     dom.cover.src = MUSIC_CONFIG.defaultCover;
@@ -429,11 +634,13 @@ function stopPlayback() {
 }
 
 function onTrackEnded() {
+    if (isCrossfading) return;
     nextTrack();
 }
 
 function onTrackError() {
     console.error('Fehler beim Laden des Tracks');
+    if (isCrossfading) return;
     nextTrack();
 }
 
@@ -456,6 +663,10 @@ function togglePlay() {
     }
     if (audioElement.paused) {
         audioElement.play();
+        const track = playlist[currentTrackIndex];
+            if (track) {
+                dispatchMusicEvent('now-playing', { title: track.title, artist: track.artist });
+        }
         isVisualizerActive = true;
         startVisualizer();
     } else {
@@ -490,7 +701,7 @@ function setMarquee(element, text) {
     });
 }
 
-// === Volume Slider (Web Audio API) ===
+// === Volume Slider ===
 function initVolume() {
     if (dom.volumeSlider) {
         dom.volumeSlider.addEventListener('input', () => {
@@ -511,7 +722,7 @@ function initVolume() {
 }
 
 function applyVolume() {
-    if (!gainNode) return;
+    if (!masterGainNode) return;
     
     const mainVol = dom.volumeSlider ? parseInt(dom.volumeSlider.value || 35) / 100 : MUSIC_CONFIG.defaultVolume;
     const inactiveMultiplier = dom.inactiveSlider ? parseInt(dom.inactiveSlider.value || 12) / 100 : MUSIC_CONFIG.defaultInactiveVolume;
@@ -519,7 +730,7 @@ function applyVolume() {
     const isTabHidden = document.hidden;
     const finalVolume = isTabHidden ? mainVol * inactiveMultiplier : mainVol;
     
-    gainNode.gain.setTargetAtTime(finalVolume, audioCtx.currentTime, 0.1);
+    masterGainNode.gain.setTargetAtTime(finalVolume, audioCtx.currentTime, 0.1);
 }
 
 function updateVolumeDisplay() {

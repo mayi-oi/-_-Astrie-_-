@@ -156,9 +156,49 @@
                             <div data-i18n="settings_nuke_music" class="atombombe-button">Ganze Musikplayer LÖSCHEN</div>
                         </div>
                         <br>
+                        <p data-i18n="settings_debug">Debugging für nerds!</p>
+                        <div class="Settingsbox-actions">
+                            <div class="Debug-test-button" onclick="testToast('upload')">
+                                <p>⬆️ Upload-Toast</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('upload-done')">
+                                <p>✅ Upload-Done</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('now-playing')">
+                                <p>🎵 Now Playing</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('update')">
+                                <p>📋 Update-Toast</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('build')">
+                                <p>🔨 Build-Start</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('build-done')">
+                                <p>✨ Build-Done</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('todo')">
+                                <p>📝 Todo-Done</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('welcome')">
+                                <p>🚀 Welcome</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('all')">
+                                <p>🎰 Alle nacheinander</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testToast('clear')">
+                                <p>🗑️ Alle löschen</p>
+                            </div>
+                            <div class="Debug-test-button" onclick="testGitHubAPI()">
+                                <p>🌐 GitHub API testen</p>
+                            </div>
+                        </div>
+                        <br>
                         <div class="Settings-footer">
                             <h1>AstrieOS</h1>
                             <p>2026.7.13</p>
+                            <br>
+                            <p>Web hoster vom:</p>
+                            <h1>Netlify!</h1>
                         </div>
                 </div>
             </div>
@@ -224,7 +264,7 @@
         <!-- info zeiger-->
          <div class="Infooverlay" id="Info-overlay">
             <div class="Info-content">
-                <div class="Info-action"><p>Version: 0.06 (PREVIEW)</p></div>
+                <div class="Info-action"><p>Version: 0.05 (PREVIEW)</p></div>
                 <button class="github-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')">Repo besuchen!</button>
             </div>
           </div>

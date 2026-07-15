@@ -2,6 +2,7 @@ class BenachrichtungSystem {
     constructor() {
         this.notifications = [];
         this.todos = [];
+        this.toasts = [];
         this.lastCommitSha = localStorage.getItem('astrie_last_commit') || null;
         this.checkInterval = null;
         this.audioCtx = null;
@@ -10,14 +11,25 @@ class BenachrichtungSystem {
     }
 
     init() {
+        this.createToastContainer();
         this.loadNotifications();
         this.parseTodos();
-        this.render();
+        this.renderOverlay();
         this.startGitHubPolling();
         this.startTodoWatcher();
         this.bindClearButton();
+        this.bindMusikplayerEvents();
     }
 
+    // === TOAST CONTAINER ===
+    createToastContainer() {
+        if (document.getElementById('astrie-toast-container')) return;
+        const container = document.createElement('div');
+        container.id = 'astrie-toast-container';
+        document.body.appendChild(container);
+    }
+
+    // === SOUND EFFEKTE ===
     playSound(type = 'default') {
         try {
             if (!this.audioCtx) {
@@ -56,6 +68,39 @@ class BenachrichtungSystem {
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
                     osc.start(now); osc.stop(now + 0.4);
                     break;
+                case 'upload':
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.setValueAtTime(600, now + 0.08);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now); osc.stop(now + 0.15);
+                    break;
+                case 'upload-done':
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.setValueAtTime(800, now + 0.1);
+                    osc.frequency.setValueAtTime(1200, now + 0.2);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now); osc.stop(now + 0.35);
+                    break;
+                case 'now-playing':
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(330, now);
+                    osc.frequency.setValueAtTime(440, now + 0.12);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now); osc.stop(now + 0.25);
+                    break;
+                case 'update':
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.setValueAtTime(1100, now + 0.1);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now); osc.stop(now + 0.3);
+                    break;
                 case 'clear':
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(600, now);
@@ -71,9 +116,203 @@ class BenachrichtungSystem {
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
                     osc.start(now); osc.stop(now + 0.2);
             }
-        } catch(e) { /* Sound nicht verfügbar = egal */ }
+        } catch(e) {}
     }
 
+    // === TOAST SYSTEM ===
+    showToast(options) {
+        const {
+            type = 'info',
+            title = 'Benachrichtung',
+            message = '',
+            detail = '',
+            icon = '🔔',
+            color = '#e2a0ff',
+            duration = 5000,
+            progress = false,
+            progressValue = 0,
+            sound = 'default',
+            url = null
+        } = options;
+
+        const container = document.getElementById('astrie-toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `astrie-toast astrie-toast-${type}`;
+        toast.style.setProperty('--toast-color', color);
+
+        const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+        toast.id = id;
+
+        let progressHtml = '';
+        if (progress) {
+            progressHtml = `<div class="astrie-toast-progress"><div class="astrie-toast-progress-bar" style="width: ${progressValue}%"></div></div>`;
+        }
+
+        let urlHtml = '';
+        if (url) {
+            urlHtml = `<button class="astrie-toast-btn" onclick="window.open('${url}', '_blank')">Öffnen</button>`;
+        }
+
+        toast.innerHTML = `
+            <div class="astrie-toast-icon">${icon}</div>
+            <div class="astrie-toast-content">
+                <div class="astrie-toast-title">${this.escapeHtml(title)}</div>
+                <div class="astrie-toast-message">${this.escapeHtml(message)}</div>
+                ${detail ? `<div class="astrie-toast-detail">${this.escapeHtml(detail)}</div>` : ''}
+                <div class="astrie-toast-actions">
+                    ${urlHtml}
+                    <button class="astrie-toast-btn astrie-toast-close">✕</button>
+                </div>
+            </div>
+            ${progressHtml}
+            <div class="astrie-toast-timer" style="animation-duration: ${duration}ms"></div>
+        `;
+
+        container.appendChild(toast);
+
+        // Sound abspielen
+        if (sound) this.playSound(sound);
+
+        // Auto-entfernen
+        const removeTimer = setTimeout(() => this.removeToast(id), duration);
+
+        // Pause on hover
+        toast.addEventListener('mouseenter', () => {
+            const timer = toast.querySelector('.astrie-toast-timer');
+            if (timer) timer.style.animationPlayState = 'paused';
+        });
+        toast.addEventListener('mouseleave', () => {
+            const timer = toast.querySelector('.astrie-toast-timer');
+            if (timer) timer.style.animationPlayState = 'running';
+        });
+
+        // Close button
+        const closeBtn = toast.querySelector('.astrie-toast-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                clearTimeout(removeTimer);
+                this.removeToast(id);
+            });
+        }
+
+        // Click to dismiss (außer auf Buttons)
+        toast.addEventListener('click', (e) => {
+            if (e.target.closest('.astrie-toast-btn')) return;
+            clearTimeout(removeTimer);
+            this.removeToast(id);
+        });
+
+        this.toasts.push({ id, element: toast, timer: removeTimer });
+
+        // Auch in Overlay-History speichern
+        this.addToHistory({ type, title, message, detail, color, url, timestamp: Date.now() });
+    }
+
+    removeToast(id) {
+        const idx = this.toasts.findIndex(t => t.id === id);
+        if (idx === -1) return;
+
+        const toast = this.toasts[idx].element;
+        toast.classList.add('astrie-toast-exit');
+
+        setTimeout(() => {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 400);
+
+        this.toasts.splice(idx, 1);
+    }
+
+    updateToastProgress(id, percent) {
+        const toast = this.toasts.find(t => t.id === id);
+        if (!toast) return;
+        const bar = toast.element.querySelector('.astrie-toast-progress-bar');
+        if (bar) bar.style.width = `${percent}%`;
+    }
+
+    // === MUSIKPLAYER EVENT INTEGRATION ===
+    bindMusikplayerEvents() {
+        // Globaler Event-Listener für Musikplayer-Events
+        window.addEventListener('astrie-music-event', (e) => {
+            const { eventType, data } = e.detail;
+            this.handleMusicEvent(eventType, data);
+        });
+    }
+
+    handleMusicEvent(type, data) {
+        switch(type) {
+            case 'upload-start':
+                this.showToast({
+                    type: 'upload',
+                    title: 'Dein Musik wird hochladen',
+                    message: data.filename || 'Datei wird verarbeitet...',
+                    detail: '0 von ' + (data.total || 1),
+                    icon: '⬆️',
+                    color: '#f59e0b',
+                    duration: 30000,
+                    progress: true,
+                    progressValue: 0,
+                    sound: 'upload'
+                });
+                break;
+            case 'upload-progress':
+                this.updateToastProgress(data.toastId, data.percent);
+                break;
+            case 'upload-done':
+                this.showToast({
+                    type: 'success',
+                    title: 'Dein Musik sind erledigt!',
+                    message: data.title || 'Upload abgeschlossen',
+                    detail: `${data.count || 1} Song(s) zur Playlist hinzugefügt`,
+                    icon: '✅',
+                    color: '#4ade80',
+                    duration: 6000,
+                    sound: 'upload-done'
+                });
+                break;
+            case 'now-playing':
+                this.showToast({
+                    type: 'music',
+                    title: 'Now Playing...',
+                    message: data.title || 'Unbekannter Song',
+                    detail: data.artist || 'Unbekannter Künstler',
+                    icon: '🎵',
+                    color: '#a855f7',
+                    duration: 4000,
+                    sound: 'now-playing'
+                });
+                break;
+            case 'build-start':
+                this.showToast({
+                    type: 'build',
+                    title: '🔨 Zusammenbauen...',
+                    message: 'AstrieOS wird gebaut',
+                    detail: data.detail || 'Bitte warten...',
+                    icon: '🔧',
+                    color: '#f59e0b',
+                    duration: 8000,
+                    progress: true,
+                    progressValue: 0,
+                    sound: 'build'
+                });
+                break;
+            case 'build-success':
+                this.showToast({
+                    type: 'build',
+                    title: '✨ Zusammenbauen erledigt!',
+                    message: 'AstrieOS ist bereit!',
+                    detail: '(ᵕ • ᴗ •)',
+                    icon: '✨',
+                    color: '#4ade80',
+                    duration: 6000,
+                    sound: 'todo-done'
+                });
+                break;
+        }
+    }
+
+    // === TODO PARSER ===
     parseTodos() {
         const todoBox = document.querySelector('.Settingsbox-todo');
         if (!todoBox) return;
@@ -88,14 +327,22 @@ class BenachrichtungSystem {
         this.todos.forEach(todo => {
             const saved = savedTodos.find(t => t.id === todo.id);
             if (saved && !saved.done && todo.done) {
-                this.add({
+                this.showToast({
                     type: 'todo',
                     title: '✅ Todo erledigt!',
-                    message: `"${todo.text}"`,
-                    icon: 'check_circle',
-                    color: '#4ade80'
+                    message: todo.text,
+                    icon: '📝',
+                    color: '#4ade80',
+                    duration: 5000,
+                    sound: 'todo-done'
                 });
-                this.playSound('todo-done');
+                this.addToHistory({
+                    type: 'todo',
+                    title: '✅ Todo erledigt!',
+                    message: todo.text,
+                    color: '#4ade80',
+                    timestamp: Date.now()
+                });
             }
         });
         localStorage.setItem('astrie_todos', JSON.stringify(this.todos));
@@ -105,26 +352,18 @@ class BenachrichtungSystem {
         setInterval(() => this.parseTodos(), 5000);
     }
 
-    // === DIREKTE GITHUB API (KEIN PROXY NÖTIG!) ===
+    // === GITHUB API (DIREKT) ===
     async fetchLatestCommit() {
         try {
-            // Direkter Aufruf an GitHub - CORS ist für öffentliche Repos erlaubt!
             const response = await fetch('https://api.github.com/repos/mayi-oi/-_-Astrie-_-/commits?per_page=1', {
                 headers: {
                     'Accept': 'application/vnd.github.v3+json',
                     'User-Agent': 'AstrieOS-NotificationSystem'
                 }
             });
-
-            if (!response.ok) {
-                // Stilles Failen - kein Error in Console
-                this.apiFailed = true;
-                return null;
-            }
-
+            if (!response.ok) { this.apiFailed = true; return null; }
             const data = await response.json();
             if (!data || data.length === 0) return null;
-
             this.apiFailed = false;
             return {
                 sha: data[0].sha,
@@ -134,130 +373,103 @@ class BenachrichtungSystem {
                 url: data[0].html_url
             };
         } catch (error) {
-            // Stilles Failen - kein roter Error
             this.apiFailed = true;
             return null;
         }
     }
 
     async startGitHubPolling() {
-        // Erster Check sofort
         await this.checkCommits();
-
-        // Alle 2 Minuten (120 Sekunden) = max 30 req/h
-        // Das ist sicher unter dem 60 req/h Limit für unauthentifizierte Requests!
-        this.checkInterval = setInterval(() => this.checkCommits(), 120000);
+        this.checkInterval = setInterval(() => this.checkCommits(), 120000); // 2 Min
     }
 
     async checkCommits() {
         const commit = await this.fetchLatestCommit();
         if (!commit) return;
-
-        // Erster Start: speichere SHA ohne Benachrichtigung
         if (!this.lastCommitSha) {
             this.lastCommitSha = commit.sha;
             localStorage.setItem('astrie_last_commit', commit.sha);
             return;
         }
-
-        // Neuer Commit!
         if (commit.sha !== this.lastCommitSha) {
             this.lastCommitSha = commit.sha;
             localStorage.setItem('astrie_last_commit', commit.sha);
-
             const timeAgo = this.formatTimeAgo(new Date(commit.date));
 
-            this.add({
+            this.showToast({
+                type: 'update',
+                title: 'AstrieOS!* hat ein update!',
+                message: `${commit.author}: "${commit.message}"`,
+                detail: `vor ${timeAgo} • 2026.7.14 → 2026.7.15`,
+                icon: '📋',
+                color: '#e2a0ff',
+                duration: 10000,
+                sound: 'update',
+                url: commit.url
+            });
+
+            this.addToHistory({
                 type: 'commit',
                 title: '🚀 Neuer Commit!',
                 message: `${commit.author}: "${commit.message}"`,
                 detail: `vor ${timeAgo}`,
                 url: commit.url,
-                icon: 'commit',
-                color: '#a855f7'
+                color: '#a855f7',
+                timestamp: Date.now()
             });
-            this.playSound('commit');
 
-            // Build-Simulation nach 3 Sekunden
+            this.playSound('commit');
             setTimeout(() => this.simulateBuild(commit.message), 3000);
         }
     }
 
     simulateBuild(commitMessage) {
-        const buildId = Date.now();
-        this.add({
+        this.showToast({
             type: 'build',
-            title: '🔨 Build gestartet',
-            message: 'AstrieOS wird zusammengebaut...',
+            title: '🔨 Zusammenbauen...',
+            message: 'AstrieOS wird gebaut',
             detail: `Commit: ${commitMessage.substring(0, 30)}...`,
-            icon: 'build',
+            icon: '🔧',
             color: '#f59e0b',
-            id: `build-${buildId}`
+            duration: 8000,
+            progress: true,
+            progressValue: 0,
+            sound: 'build'
         });
-        this.playSound('build');
 
         setTimeout(() => {
-            this.add({
-                type: 'build-success',
-                title: '✨ Build erfolgreich!',
+            this.showToast({
+                type: 'build',
+                title: '✨ Zusammenbauen erledigt!',
                 message: 'AstrieOS ist bereit! (ᵕ • ᴗ •)',
                 detail: 'Alle Systeme funktionieren',
-                icon: 'check',
-                color: '#4ade80'
+                icon: '✨',
+                color: '#4ade80',
+                duration: 6000,
+                sound: 'todo-done'
             });
-            this.playSound('todo-done');
         }, 5000);
     }
 
-    // === MANUELLER TEST (für die Console!) ===
-    async testCommit() {
-        const commit = await this.fetchLatestCommit();
-        if (commit) {
-            console.log('✅ GitHub API funktioniert! Letzter Commit:', commit.message);
-            // Simuliere eine Benachrichtung mit echten Daten
-            this.add({
-                type: 'commit',
-                title: '🧪 Test-Commit!',
-                message: `${commit.author}: "${commit.message}"`,
-                detail: 'Manuell getestet',
-                url: commit.url,
-                color: '#a855f7'
-            });
-            this.playSound('commit');
-        } else {
-            console.log('⚠️ GitHub API nicht erreichbar (Rate-Limit?)');
-            // Fallback: Zeige Test-Benachrichtung ohne API
-            this.add({
-                type: 'test',
-                title: '🧪 Test-Modus',
-                message: 'API-Limit erreicht oder Offline',
-                detail: 'Aber das System funktioniert! :D',
-                color: '#f59e0b'
-            });
-        }
-    }
-
-    // === BENACHRICHTUNGS MANAGEMENT ===
-    add(notification) {
+    // === OVERLAY HISTORY ===
+    addToHistory(notification) {
         const notif = {
-            id: notification.id || `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             timestamp: Date.now(),
             read: false,
             ...notification
         };
         this.notifications.unshift(notif);
-        if (this.notifications.length > 50) {
-            this.notifications = this.notifications.slice(0, 50);
-        }
+        if (this.notifications.length > 50) this.notifications = this.notifications.slice(0, 50);
         this.saveNotifications();
-        this.render();
+        this.renderOverlay();
         this.updateBadge();
     }
 
     remove(id) {
         this.notifications = this.notifications.filter(n => n.id !== id);
         this.saveNotifications();
-        this.render();
+        this.renderOverlay();
         this.updateBadge();
     }
 
@@ -265,18 +477,13 @@ class BenachrichtungSystem {
         this.playSound('clear');
         this.notifications = [];
         this.saveNotifications();
-        this.render();
+        this.renderOverlay();
         this.updateBadge();
     }
 
     markAsRead(id) {
         const notif = this.notifications.find(n => n.id === id);
-        if (notif) {
-            notif.read = true;
-            this.saveNotifications();
-            this.render();
-            this.updateBadge();
-        }
+        if (notif) { notif.read = true; this.saveNotifications(); this.renderOverlay(); this.updateBadge(); }
     }
 
     saveNotifications() {
@@ -287,12 +494,10 @@ class BenachrichtungSystem {
         try {
             const saved = localStorage.getItem('astrie_notifications');
             if (saved) this.notifications = JSON.parse(saved);
-        } catch(e) {
-            this.notifications = [];
-        }
+        } catch(e) { this.notifications = []; }
     }
 
-    render() {
+    renderOverlay() {
         const container = document.querySelector('.Benachrichten-content');
         if (!container) return;
         const oldList = container.querySelector('.Benachrichten-liste');
@@ -334,7 +539,6 @@ class BenachrichtungSystem {
         const tools = container.querySelector('.Benachrichten-tools');
         if (tools) tools.after(list);
         else container.appendChild(list);
-        this.updateBadge();
     }
 
     updateBadge() {
@@ -352,9 +556,7 @@ class BenachrichtungSystem {
 
     bindClearButton() {
         const clearBtn = document.getElementById('benachrichten-clear');
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => this.clearAll());
-        }
+        if (clearBtn) clearBtn.addEventListener('click', () => this.clearAll());
     }
 
     formatTimeAgo(date) {
@@ -372,24 +574,226 @@ class BenachrichtungSystem {
     }
 }
 
+function testToast(type) {
+    if (!benachrichtungSystem) {
+        console.error('BenachrichtungSystem noch nicht initialisiert!');
+        return;
+    }
+
+    switch(type) {
+        case 'upload':
+            benachrichtungSystem.showToast({
+                type: 'upload',
+                title: 'Dein Musik wird hochladen',
+                message: 'Astrie-beatmap.osz',
+                detail: '0 von 39',
+                icon: '⬆️',
+                color: '#f59e0b',
+                duration: 8000,
+                progress: true,
+                progressValue: 0,
+                sound: 'upload'
+            });
+            // Simuliere Fortschritt
+            let uploadPct = 0;
+            const uploadInterval = setInterval(() => {
+                uploadPct += Math.random() * 20 + 10;
+                if (uploadPct >= 100) {
+                    uploadPct = 100;
+                    clearInterval(uploadInterval);
+                }
+                // Update wird über Toast-ID gemacht - hier vereinfacht
+            }, 500);
+            break;
+
+        case 'upload-done':
+            benachrichtungSystem.showToast({
+                type: 'success',
+                title: 'Dein Musik sind erledigt!',
+                message: 'Astrie-beatmap',
+                detail: '1 Song zur Playlist hinzugefügt',
+                icon: '✅',
+                color: '#4ade80',
+                duration: 6000,
+                sound: 'upload-done'
+            });
+            break;
+
+        case 'now-playing':
+            benachrichtungSystem.showToast({
+                type: 'music',
+                title: 'Now Playing...',
+                message: 'Astrie Theme Song',
+                detail: 'AstrieOS Soundteam',
+                icon: '🎵',
+                color: '#a855f7',
+                duration: 4000,
+                sound: 'now-playing'
+            });
+            break;
+
+        case 'update':
+            benachrichtungSystem.showToast({
+                type: 'update',
+                title: 'AstrieOS!* hat ein update!',
+                message: 'mayi-oi: "Fix wallpaper engine"',
+                detail: '2026.7.14 → 2026.7.15',
+                icon: '📋',
+                color: '#e2a0ff',
+                duration: 7000,
+                sound: 'update',
+                url: 'https://github.com/mayi-oi/-_-Astrie-_-/commit/abc123'
+            });
+            break;
+
+        case 'build':
+            benachrichtungSystem.showToast({
+                type: 'build',
+                title: '🔨 Zusammenbauen...',
+                message: 'AstrieOS wird gebaut',
+                detail: 'Commit: Fix wallpaper engine...',
+                icon: '🔧',
+                color: '#f59e0b',
+                duration: 6000,
+                progress: true,
+                progressValue: 0,
+                sound: 'build'
+            });
+            // Simuliere Build-Fortschritt
+            let buildPct = 0;
+            const buildInterval = setInterval(() => {
+                buildPct += 15;
+                if (buildPct >= 100) {
+                    buildPct = 100;
+                    clearInterval(buildInterval);
+                }
+            }, 600);
+            break;
+
+        case 'build-done':
+            benachrichtungSystem.showToast({
+                type: 'build',
+                title: '✨ Zusammenbauen erledigt!',
+                message: 'AstrieOS ist bereit!',
+                detail: '(ᵕ • ᴗ •)',
+                icon: '✨',
+                color: '#4ade80',
+                duration: 5000,
+                sound: 'todo-done'
+            });
+            break;
+
+        case 'todo':
+            benachrichtungSystem.showToast({
+                type: 'todo',
+                title: '✅ Todo erledigt!',
+                message: 'Sprache übersetzt [Erledgit! :D]',
+                icon: '📝',
+                color: '#4ade80',
+                duration: 5000,
+                sound: 'todo-done'
+            });
+            break;
+
+        case 'welcome':
+            benachrichtungSystem.showToast({
+                type: 'welcome',
+                title: 'Willkommen bei AstrieOS!',
+                message: 'Benachrichtungs-Bar ist aktiv!',
+                detail: 'Überwache Commits, Uploads & Todos...',
+                icon: '🚀',
+                color: '#e2a0ff',
+                duration: 5000,
+                sound: 'update'
+            });
+            break;
+
+        case 'all':
+            // Alle nacheinander mit Verzögerung
+            const sequence = ['upload', 'upload-done', 'now-playing', 'update', 'build', 'build-done'];
+            sequence.forEach((t, i) => {
+                setTimeout(() => testToast(t), i * 1200);
+            });
+            break;
+
+        case 'clear':
+            benachrichtungSystem.clearAll();
+            break;
+    }
+}
+
+// GitHub API Test
+async function testGitHubAPI() {
+    if (!benachrichtungSystem) return;
+
+    benachrichtungSystem.showToast({
+        type: 'info',
+        title: '🌐 Teste GitHub API...',
+        message: 'Frage commits ab...',
+        icon: '⏳',
+        color: '#e2a0ff',
+        duration: 4000,
+        sound: 'default'
+    });
+
+    const commit = await benachrichtungSystem.fetchLatestCommit();
+
+    if (commit) {
+        benachrichtungSystem.showToast({
+            type: 'success',
+            title: '✅ API funktioniert!',
+            message: `Letzter Commit: "${commit.message.substring(0, 30)}..."`,
+            detail: `von ${commit.author}`,
+            icon: '🎉',
+            color: '#4ade80',
+            duration: 5000,
+            sound: 'todo-done',
+            url: commit.url
+        });
+    } else {
+        benachrichtungSystem.showToast({
+            type: 'error',
+            title: '⚠️ API nicht erreichbar',
+            message: 'Rate-Limit erreicht oder Offline',
+            detail: 'Versuche es später erneut',
+            icon: '🔌',
+            color: '#ff6b6b',
+            duration: 5000,
+            sound: 'clear'
+        });
+    }
+}
+
+// Tastenkürzel für Tests (nur im Dev-Modus)
+document.addEventListener('keydown', (e) => {
+    // Nur wenn Settings-Overlay offen ist
+    const settingsOpen = document.querySelector('.Settingsoverlay.Settings-active');
+    if (!settingsOpen) return;
+
+    if (e.key === 't' && e.ctrlKey) {
+        e.preventDefault();
+        testToast('all');
+    }
+});
+
 // === INITIALISIERUNG ===
 let benachrichtungSystem;
 
 document.addEventListener('DOMContentLoaded', () => {
     benachrichtungSystem = new BenachrichtungSystem();
-
-    // Willkommensnachricht beim ersten Mal
     if (!localStorage.getItem('astrie_welcome_sent')) {
         setTimeout(() => {
-            benachrichtungSystem.add({
+            benachrichtungSystem.showToast({
                 type: 'welcome',
-                title: 'Willkommen bei AstrieOS! ദ്ദി(•̀ ᗜ <)',
-                message: 'Benachrichtungssystem ist aktiv.',
-                detail: 'Überwache Commits & Todos...',
-                icon: 'welcome',
-                color: '#e2a0ff'
+                title: 'Willkommen bei AstrieOS!',
+                message: 'Benachrichtungs-Bar ist aktiv!',
+                detail: 'Überwache Commits, Uploads & Todos...',
+                icon: '🚀',
+                color: '#e2a0ff',
+                duration: 5000,
+                sound: 'update'
             });
             localStorage.setItem('astrie_welcome_sent', 'true');
-        }, 2000);
+        }, 1500);
     }
 });
