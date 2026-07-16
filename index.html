@@ -225,10 +225,21 @@
                 </div>
                 <div class="Settingsbox-todo">
                     <p>Todo:</p>
-                    <li>Hinzufügen und löschen</li>
+                    <li>Hinzufügen und löschen [Erledgit! :D]</li>
                 </div>
-                <div class="Kontowechsen-add"><img src="Res/Bild/Icon/Desktop/Status/person_add_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p data-i18n="account_switch_add">Konto hingefügt!</p></div>
+                
+                <div class="Kontowechsen-add" onclick="kontoManager.addKonto(prompt('Name:','Neues Konto'))">
+                    <img src="Res/Bild/Icon/Desktop/Status/person_add_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg">
+                    <p>Konto hinzufügen!</p>
+                </div>
+                <div class="Kontowechsen-add" onclick="exportAktivKonto()">
+                    <p>Als JSON exportieren</p>
+                </div>
+                <div class="Kontowechsen-banner">
+                    <img id="Kontowechsen-banner-bild" src="Res/Bild/Hintergrund/Default-Banner.png">
+                </div>
                 <div class="Kontowechsen-box">
+                
                     <div class="Kontowechsen-item">
                         <img id="pfpbild" src="Res/Bild/Logo/AddText_07-03-07.27.32.png" width="48" height="48">
                         <p data-i18n="account_switch_guest">Gast</p>
@@ -339,6 +350,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    <script src="Java/kontosystem.js"></script>
     <script src="Java/einstellungen.js"></script>
     <script src="Java/musikplayer.js"></script>
     <script src="Java/übersetztung.js"></script>
