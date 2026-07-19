@@ -25,6 +25,7 @@ const WallpaperEngine = {
         { name: 'Starfield', type: 'canvas', id: 'starfield', description: 'Fliegende Sterne im Weltraum' },
         { name: 'Aurora Borealis', type: 'canvas', id: 'aurora', description: 'Tanzende Polarlichter' },
         { name: 'Matrix Rain', type: 'canvas', id: 'matrix', description: 'Digitaler Regen à la Matrix' },
+        { name: 'Visualizer', type: 'canvas', id: 'visualizer', description: 'Fühlt dein Musik!' },
         { name: 'Particle Flow', type: 'canvas', id: 'particles', description: 'Interaktive Partikelströme' },
         { name: 'Gradient Waves', type: 'shader', id: 'gradient-waves', description: 'Fließende Farbwellen (GPU)' },
         { name: 'Nebula Cloud', type: 'shader', id: 'nebula', description: 'Prozedurale Nebelwolke (GPU)' }

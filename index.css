@@ -16,7 +16,7 @@ body {
 }
 
 ::selection {
-    background: #ffffff00;
+    background: #c2e0ff00;
 }
 
 .github-button {
@@ -78,6 +78,15 @@ body {
     font-size: 1rem;
 }
 
+.Loading-logo {
+    display: flex;
+    max-width: 100px;
+}
+
+.Loading-logo img {
+    width: 300px;
+}
+
 .Loading-spinner {
     margin: auto;
     border: 5px solid #b872d2;
@@ -137,14 +146,21 @@ body {
     align-content: right;
 }
 
-.Topbar-user img, .Topbar-info img, .Topbar-musik img, .Topbar-notfi img {
+.Topbar-drawer {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-content: center;
+}
+
+.Topbar-user img, .Topbar-info img, .Topbar-musik img, .Topbar-notfi img, .Topbar-menu img {
     padding: 4px;
     border-radius: 12px;
     transition: all 0.1s ease;
     cursor: pointer;
 }
 
-.Topbar-user img:hover, .Topbar-info img:hover, .Topbar-musik img:hover, .Topbar-notfi img:hover {
+.Topbar-user img:hover, .Topbar-info img:hover, .Topbar-musik img:hover, .Topbar-notfi img:hover, .Topbar-menu img:hover {
     background-color: #ffffff71;
 }
 
@@ -1154,25 +1170,22 @@ body {
 .Debug-test-button {
     margin-top: 8px;
     margin-bottom: 8px;
-    padding: 12px 18px;
+    padding: 24px 18px;
     border-radius: 12px;
     background-color: #5a3a6b;
     color: #e2a0ff;
     text-align: center;
     font-weight: 400;
     cursor: pointer;
-    transition: all 0.15s ease;
     border: 1px solid rgba(226, 160, 255, 0.2);
 }
 
 .Debug-test-button:hover {
     background-color: #7a4a8b;
     box-shadow: 0 0 0 2px #e2a0ff, 0 0 12px rgba(226, 160, 255, 0.3);
-    transform: translateY(-1px);
 }
 
 .Debug-test-button:active {
-    transform: translateY(1px);
     box-shadow: 0 0 0 1px #e2a0ff;
 }
 
@@ -1211,6 +1224,7 @@ body {
     overflow-y: scroll;
     overflow-x: hidden;
     max-height: 540px;
+    border-radius: 12px;
 }
 
 .Settingsbox-todo {
@@ -1451,4 +1465,137 @@ body {
     height: 60%;
     pointer-events: none;
     z-index: 2;
+}
+
+.Topbardrawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #00000066;
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+.Topbardrawer-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+    transition: all 0.5s ease;
+}
+
+.Topbardrawer-content {
+    opacity: 0;
+    transform: translateY(-20%);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.Topbardrawer-overlay.open .Topbardrawer-content {
+    opacity: 1;
+    transform: translateY(0%);
+}
+
+.Topbardrawer-suchen {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 18px;
+    width: 40rem;
+    padding: 18px 18px;
+    border-radius: 12px;
+    background-color: #ffffff71;
+}
+
+.Topbardrawer-suchen input[type="text"], input[type="text"]::placeholder {
+    height: 24px;
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    color: #ffffffa5;
+    font-family: Google-sans;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: color 0.2s ease, background-color 0.2s ease, height 0.1s cubic-bezier(0.34, 1.86, 0.67, 1);
+}
+
+.Topbardrawer-suchen input[type="text"]:focus {
+    height: 44px;
+    outline: none;
+    color: #70507e;
+    background-color: #f5b6ff;
+}
+
+.Topbardrawer-suchen:hover, .Topbardrawer-grid:hover, .Topbardrawer-tools:hover {
+    box-shadow: 0 0 0 2px #f0c6ff;
+}
+
+.Topbardrawer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 34px;
+    width: 40rem;
+    padding: 18px 18px;
+    border-radius: 12px;
+    background-color: #ffffff71;
+    color: #ffffff;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.Topbardrawer-item {
+    padding: 12px;
+    border-radius: 12px;
+    transition: all 0.45s ease;
+    cursor: pointer;
+}
+
+.Topbardrawer-item:hover {
+    background-color: #f5b6ff4b;
+    box-shadow: 0 0 0 2px #f0c6ff;
+    transition: all 0s ease;
+}
+
+.Topbardrawer-tools {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 18px;
+    width: 40rem;
+    border-radius: 12px;
+    background-color: #ffffff71;
+    padding: 8px 18px;
+}
+
+.Topbardrawer-gridchnage {
+    display: flex;
+    gap: 18px;
+    width: 20rem;
+    padding: 8px 8px;
+    border-radius: 12px;
+    background-color: #ffffff4d;
+    color: #ffffff;
+}
+
+.Topbardrawer-gridchnage img {
+    width: 32px;
+}
+
+.Topbardrawer-gridchnage:hover {
+    background-color: #f5b6ff4b;
+    box-shadow: 0 0 0 2px #f0c6ff;
+}
+
+.Topbardrawer-display {
+    width: 40rem;
+    padding: 8px 18px;
+    border-radius: 12px;
+    background-color: #ffb08571;
+    color: #ffffff;
+    text-align: center;
 }

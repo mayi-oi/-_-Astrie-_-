@@ -1,3 +1,12 @@
+/**
+ * AstrieOS Benachrichtungs-Bar-System
+ * - Toast-Popups rechts oben (Upload, Update, Now Playing, Build...)
+ * - Sound-Effekte (Web Audio API)
+ * - GitHub Commit-Tracking
+ * - Build-Simulation (Zusammenbauen)
+ * - Musikplayer-Event-Integration
+ */
+
 class BenachrichtungSystem {
     constructor() {
         this.notifications = [];
@@ -649,7 +658,7 @@ function testToast(type) {
         case 'build':
             benachrichtungSystem.showToast({
                 type: 'build',
-                title: '🔨 Zusammenbauen...',
+                title: 'Zusammenbauen...',
                 message: 'AstrieOS wird gebaut',
                 detail: 'Commit: Fix wallpaper engine...',
                 icon: '🔧',
@@ -673,7 +682,7 @@ function testToast(type) {
         case 'build-done':
             benachrichtungSystem.showToast({
                 type: 'build',
-                title: '✨ Zusammenbauen erledigt!',
+                title: 'Zusammenbauen erledigt!',
                 message: 'AstrieOS ist bereit!',
                 detail: '(ᵕ • ᴗ •)',
                 icon: '✨',
@@ -686,7 +695,7 @@ function testToast(type) {
         case 'todo':
             benachrichtungSystem.showToast({
                 type: 'todo',
-                title: '✅ Todo erledigt!',
+                title: 'Todo erledigt!',
                 message: 'Sprache übersetzt [Erledgit! :D]',
                 icon: '📝',
                 color: '#4ade80',

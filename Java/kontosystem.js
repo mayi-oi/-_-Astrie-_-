@@ -1,3 +1,12 @@
+/* todo list 3000
+    1. Kontosystem function
+    2. Hinfügt den konto und löschen
+    3. Sync den Konto pfp und banner
+    4. Nutzterkonto als .json datein
+*/
+
+// === HILFSFUNKTIONEN ===
+
 // Datei zu Base64 konvertieren (für persistenter speicherung!)
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {

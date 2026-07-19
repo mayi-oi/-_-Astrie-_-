@@ -21,6 +21,9 @@ document.getElementById('Kontowechsen-overlay').addEventListener('click', (e) =>
 function Notfitoggle() { document.querySelector('.Benachrichtenoverlay').classList.toggle('Benachrichtgungen-active'); }
 document.getElementById('Benachrichten-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('Benachrichten-overlay')) Notfitoggle(); });
 
+function topbarMenu() { document.querySelector('.Topbardrawer-overlay').classList.toggle('open'); }
+document.getElementById('topbardrawer-overlay').addEventListener('click', (e) => { if (e.target === document.getElementById('topbardrawer-overlay')) topbarMenu(); });
+
 // Keybind shortcuts
 function init() {
     document.addEventListener('keydown', handleKeydown);
@@ -35,6 +38,7 @@ function handleKeydown(e) {
             case 'KeyS': Settingtoggle(); break;
             case 'KeyK': Kontoswitch(); break;
             case 'KeyN': Notfitoggle(); break;
+            case 'KeyH': topbarMenu(); break;
         }
     }
 

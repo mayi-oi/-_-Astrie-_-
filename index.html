@@ -67,6 +67,7 @@
                             <div data-i18n="settings_repo_visit" class="Repo-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')"><p>Repo besuchen!</p></div>
                             <div data-i18n="settings_release" class="Release-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-/releases', '_blank')"><p>Release durchlesen!</p></div>
                             <div data-i18n="settings_profile" class="Release-button" onclick="window.open('https://github.com/mayi-oi', '_blank')"><p>Profil besuchen!</p></div>
+                            <div class="Release-button" onclick="Modstoggle()"><p>Mods / Addons! (wip!)</p></div>
                             <br>
                             <p data-i18n="settings_input">Eingabe</p>
                             <div data-i18n="settings_shortcuts" class="Release-button" onclick="Keybindtoggle()"><p>Tastenkürzel konfigurieren</p></div>
@@ -159,37 +160,37 @@
                         <p data-i18n="settings_debug">Debugging für nerds!</p>
                         <div class="Settingsbox-actions">
                             <div class="Debug-test-button" onclick="testToast('upload')">
-                                <p>⬆️ Upload-Toast</p>
+                                <p>Upload-Toast</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('upload-done')">
-                                <p>✅ Upload-Done</p>
+                                <p>Upload-Done</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('now-playing')">
-                                <p>🎵 Now Playing</p>
+                                <p>Now Playing</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('update')">
-                                <p>📋 Update-Toast</p>
+                                <p>Update-Toast</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('build')">
-                                <p>🔨 Build-Start</p>
+                                <p>Build-Start</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('build-done')">
-                                <p>✨ Build-Done</p>
+                                <p>Build-Done</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('todo')">
-                                <p>📝 Todo-Done</p>
+                                <p>Todo-Done</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('welcome')">
-                                <p>🚀 Welcome</p>
+                                <p>Welcome</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('all')">
-                                <p>🎰 Alle nacheinander</p>
+                                <p>Alle nacheinander</p>
                             </div>
                             <div class="Debug-test-button" onclick="testToast('clear')">
-                                <p>🗑️ Alle löschen</p>
+                                <p>Alle löschen</p>
                             </div>
                             <div class="Debug-test-button" onclick="testGitHubAPI()">
-                                <p>🌐 GitHub API testen</p>
+                                <p>GitHub API testen</p>
                             </div>
                         </div>
                         <br>
@@ -198,7 +199,7 @@
                             <p>2026.7.13</p>
                             <br>
                             <p>Web hoster vom:</p>
-                            <h1>Netlify!</h1>
+                            <h1 onclick="window.location.href='https://www.netlify.com/'">Netlify!</h1>
                         </div>
                 </div>
             </div>
@@ -322,6 +323,27 @@
             </div>
          </div>
 
+        <!-- Topbar drawer -->
+         <div class="Topbardrawer-overlay" id="topbardrawer-overlay">
+            <div class="Topbardrawer-content">
+                <div class="Topbardrawer-display"><h2>In Arbeit!</h2></div>
+                <div class="Topbardrawer-suchen"><img src="Res/Bild/Icon/Desktop/Docker/search_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><input type="text" placeholder="Heyy suchen mich!""></div>
+                <div class="Topbardrawer-tools">
+                    <div class="Topbardrawer-gridchnage"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>3x3</p></div>
+                    <div class="Topbardrawer-gridchnage"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Grid</p></div>
+                    <div class="Topbardrawer-gridchnage"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Filter</p></div>
+                </div>
+                <div class="Topbardrawer-grid">
+                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Broswer.png"><p>Cool internet!</p></div>
+                    <div onclick="Settingtoggle()" class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Settings.png"><p>Einstellungen!</p></div>
+                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Store.png"><p>Mods und Addons!</p></div>
+                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Texteditor.png"><p>Yapping editor!</p></div>
+                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Datein.png"><p>Datein!</p></div>
+                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Beatmapmirror.png"><p>osu!beatmap downloader!</p></div>
+                </div>
+            </div>
+         </div>
+
         <!-- Topbar -->
          <div class="Topbar-status">
             <div class="Topbar-content">
@@ -343,6 +365,9 @@
 
         <!-- Docker -->
           <div class="Docker-div">
+            <div class="Topbar-drawer">
+                <div class="Topbar-menu"><img src="Res/Bild/Icon/Desktop/Docker/menu_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg" onclick="topbarMenu()"></div>
+            </div>
             <p>AstrieOS [INDEV] | Desktop exklusiv</p>
           </div>
 
