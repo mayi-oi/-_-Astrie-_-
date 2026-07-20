@@ -67,7 +67,7 @@
                             <div data-i18n="settings_repo_visit" class="Repo-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')"><p>Repo besuchen!</p></div>
                             <div data-i18n="settings_release" class="Release-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-/releases', '_blank')"><p>Release durchlesen!</p></div>
                             <div data-i18n="settings_profile" class="Release-button" onclick="window.open('https://github.com/mayi-oi', '_blank')"><p>Profil besuchen!</p></div>
-                            <div class="Release-button" onclick="Modstoggle()"><p>Mods / Addons! (wip!)</p></div>
+                            <div class="Release-button" onclick="Modstoggle()"><p>Mods / Addons list! (wip!)</p></div>
                             <br>
                             <p data-i18n="settings_input">Eingabe</p>
                             <div data-i18n="settings_shortcuts" class="Release-button" onclick="Keybindtoggle()"><p>Tastenkürzel konfigurieren</p></div>
@@ -196,7 +196,7 @@
                         <br>
                         <div class="Settings-footer">
                             <h1>AstrieOS</h1>
-                            <p>2026.7.13</p>
+                            <p>2026.7.20</p>
                             <br>
                             <p>Web hoster vom:</p>
                             <h1 onclick="window.location.href='https://www.netlify.com/'">Netlify!</h1>
@@ -276,7 +276,7 @@
         <!-- info zeiger-->
          <div class="Infooverlay" id="Info-overlay">
             <div class="Info-content">
-                <div class="Info-action"><p>Version: 0.05 (PREVIEW)</p></div>
+                <div class="Info-action"><p>Version: 0.07 (PREVIEW)</p></div>
                 <button class="github-button" onclick="window.open('https://github.com/mayi-oi/-_-Astrie-_-', '_blank')">Repo besuchen!</button>
             </div>
           </div>
@@ -334,12 +334,21 @@
                     <div class="Topbardrawer-gridchnage"><img src="Res/Bild/Icon/Desktop/Musikplayer/keyboard_arrow_down_24dp_FFFFFF_FILL1_wght400_GRAD0_opsz24.svg"><p>Filter</p></div>
                 </div>
                 <div class="Topbardrawer-grid">
-                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Broswer.png"><p>Cool internet!</p></div>
-                    <div onclick="Settingtoggle()" class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Settings.png"><p>Einstellungen!</p></div>
-                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Store.png"><p>Mods und Addons!</p></div>
-                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Texteditor.png"><p>Yapping editor!</p></div>
-                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Datein.png"><p>Datein!</p></div>
-                    <div class="Topbardrawer-item"><img src="Res/Bild/Icon/Desktop/Docker/Beatmapmirror.png"><p>osu!beatmap downloader!</p></div>
+                    <div class="Topbardrawer-item" onclick="AppSystem.openBrowser()">
+                        <img src="Res/Bild/Icon/Desktop/Docker/Broswer.png"><p>Cool internet!</p>
+                    </div>
+                    <div onclick="Settingtoggle()" class="Topbardrawer-item">
+                        <img src="Res/Bild/Icon/Desktop/Docker/Settings.png"><p>Einstellungen!</p>
+                    </div>
+                    <div class="Topbardrawer-item" onclick="AppSystem.openOsuDownloader()">
+                        <img src="Res/Bild/Icon/Desktop/Docker/Beatmapmirror.png"><p>osu!beatmap downloader!</p>
+                    </div>
+                    <div class="Topbardrawer-item" onclick="AppSystem.openTextEditor()">
+                        <img src="Res/Bild/Icon/Desktop/Docker/Texteditor.png"><p>Yapping editor!</p>
+                    </div>
+                    <div class="Topbardrawer-item" onclick="AppSystem.openFileManager()">
+                        <img src="Res/Bild/Icon/Desktop/Docker/Datein.png"><p>Dateien!</p>
+                    </div>
                 </div>
             </div>
          </div>
@@ -380,6 +389,8 @@
     <script src="Java/musikplayer.js"></script>
     <script src="Java/übersetztung.js"></script>
     <script src="Java/toggle.js"></script>
+    <script src="Java/windowsystem.js"></script>
+    <script src="Java/appsystem.js"></script>
     <script src="Java/Benachrichtung.js"></script>
     <script src="Java/wallpaper-engine.js"></script>
     <script>
