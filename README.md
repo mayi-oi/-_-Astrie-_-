@@ -6,4 +6,10 @@ Willkommen zum AstrieOS!
 
 ## Warum diese repo existiert?
 Wegen den [musikplayer](https://github.com/mayi-oi/Pfandkuchen/blob/main/musikplayer.html) script ist super wirklich lang und complex lol
-<p align=center>Mayi-oi 2026
+
+## Was wirklich besonders?????
+- Speicher system endlich funktioniert!
+- Window system reworked!
+- osz Dateien sind unterstützt!
+- Multi Sprache unterstützt! (yayyyyy!!!)
+- Mod und addons unterstützen! (kommen bald!)
